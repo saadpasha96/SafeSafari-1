@@ -30,6 +30,7 @@
 
         <EditText
             android:id="@+id/u_email_in"
+            android:drawableStart="@drawable/email_icon"
             android:layout_width="331dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -46,12 +47,14 @@
         android:id="@+id/passwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email">
 
     <EditText
         android:id="@+id/u_pw_in"
+        android:drawableStart="@drawable/pass_icon"
         android:layout_width="331dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -63,10 +66,11 @@
         android:singleLine="true"
        />
     </android.support.design.widget.TextInputLayout>
+
     <Button
         android:id="@+id/login_btn"
         android:layout_width="218dp"
-        android:layout_height="48dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="48dp"
         android:layout_marginStart="48dp"
         android:layout_marginTop="28dp"
@@ -78,31 +82,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwd" />
 
-    <TextView
-        android:id="@+id/forgot_password"
-        android:layout_width="175dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="24dp"
-        android:text="Forgot Password?"
-        android:textAlignment="viewStart"
-        android:textAllCaps="false"
+    <Button
+        android:id="@+id/reg_btn"
+        android:layout_width="218dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/buttonshape"
+        android:text="Register"
+        android:textColor="#FFFF"
         android:textSize="18sp"
-        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_btn" />
 
-    <TextView
-        android:id="@+id/register_user"
-        android:layout_width="170dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="8dp"
-        android:clickable="true"
-        android:text="Register"
+    <Button
+        android:id="@+id/pass_reset"
+        android:background="@drawable/buttonshape"
+        android:layout_width="218dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="16dp"
+        android:text="Forgot Password?"
+        android:textColor="#FFFF"
         android:textSize="18sp"
-        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/forgot_password" />
+        app:layout_constraintTop_toBottomOf="@+id/reg_btn" />
+
 
 </android.support.constraint.ConstraintLayout>

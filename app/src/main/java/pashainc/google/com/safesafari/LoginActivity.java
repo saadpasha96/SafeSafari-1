@@ -29,10 +29,10 @@ public class LoginActivity extends AppCompatActivity {
     //Firebase
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private EditText u_email, u_pw;
-    private Button login_btn;
+    private Button login_btn, register, forgotpassword;
     private ProgressBar progressBar;
     private DatabaseReference mDatabase;
-    private TextView register;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, CurrentLocation.class);
                             startActivity(intent);
 
-
                     }
                 });
             }
         });
 
 
-        register = (TextView) findViewById(R.id.register_user);
+        register = (Button) findViewById(R.id.reg_btn);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,6 +80,10 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        forgotpassword = (Button) findViewById(R.id.pass_reset);
+        
+
     }
 
 
