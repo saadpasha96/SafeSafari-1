@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "212247372724",
+    "firebase_url": "https://safesafari-92dcd.firebaseio.com",
+    "project_id": "safesafari-92dcd",
+    "storage_bucket": "safesafari-92dcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212247372724:android:2b50034c0c1f8074",
+        "android_client_info": {
+          "package_name": "pashainc.google.com.safesafari"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212247372724-uvo11v3iflk8mekkgi23s8insskisg5o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pashainc.google.com.safesafari",
+            "certificate_hash": "6fb2e3304911fd8e0784c7c3063fc90c238b576d"
+          }
+        },
+        {
+          "client_id": "212247372724-p2o3bb0ev7e35e4986132c7jlt58gp3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc-wdQhcd-SxKsZC3_sril4DGa01dsB8c"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212247372724-p2o3bb0ev7e35e4986132c7jlt58gp3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
