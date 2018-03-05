@@ -37,63 +37,7 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        phoneNumber = "03336118070";
-
-
-
-
-        PhoneAuthProvider.OnVerificationStateChangedCallbacks ov = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-
-                signInWithCredential(phoneAuthCredential);
-            }
-
-            @Override
-            public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                super.onCodeSent(s, forceResendingToken);
-                mVerificationId = s;
-            }
-
-            @Override
-            public void onCodeAutoRetrievalTimeOut(String s) {
-                super.onCodeAutoRetrievalTimeOut(s);
-            }
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-
-
-            }
-        };
-
-            PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber,60, TimeUnit.SECONDS,this,ov);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            name = (EditText) findViewById(R.id.name);
-        email = (EditText) findViewById(R.id.email);
-
-        password = (EditText) findViewById(R.id.password);
+        name = (EditText) findViewById(R.id.name);
         phone = (EditText) findViewById(R.id.phone);
         guard_name = (EditText) findViewById(R.id.guard_name);
         guard_phone = (EditText) findViewById(R.id.guard_phone);
@@ -101,47 +45,42 @@ public class Register extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        //pbar = (ProgressBar) findViewById(R.id.pbar);
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "OnClick: attempting to register");
-
                 //check empty edit fields
-                if (!isEmpty(name.getText().toString()) && !isEmpty(email.getText().toString()) && !isEmpty(password.getText().toString()) && !isEmpty(phone.getText().toString()) && !isEmpty(guard_name.getText().toString()) && !isEmpty(guard_phone.getText().toString())) {
+                if (!isEmpty(name.getText().toString()) && !isEmpty(guard_name.getText().toString()) && !isEmpty(guard_phone.getText().toString())) {
 
-                    //NewUserReg(email.getText().toString(), password.getText().toString());
-                    mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                            .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "createUserWithEmail:success");
-                                        String user = mAuth.getCurrentUser().getUid();
+                    String user = mAuth.getCurrentUser().getUid();
+                    DatabaseReference mDatabaseUID = mDatabase.child("User").child(user);
+                    mDatabaseUID.child("Name").setValue(name.getText().toString());
+                    mDatabaseUID.child("Guardian Name").setValue(guard_name.getText().toString());
+                    mDatabaseUID.child("Guardian Phone").setValue(guard_phone.getText().toString());
 
-                                        DatabaseReference mDatabaseUID = mDatabase.child("User").child(user);
+                    Toast.makeText(Register.this, "Success!", Toast.LENGTH_SHORT).show();
 
-                                        mDatabaseUID.child("Name").setValue(name.getText().toString());
-                                        mDatabaseUID.child("Phone").setValue(phone.getText().toString());
-                                        mDatabaseUID.child("Guardian Name").setValue(guard_name.getText().toString());
-                                        mDatabaseUID.child("Guardian Phone").setValue(guard_phone.getText().toString());
-
-                                        Toast.makeText(Register.this, "Success!", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                    else {
-                                        // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                        Toast.makeText(Register.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
+//                    //NewUserReg(email.getText().toString(), password.getText().toString());
+//                    mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+//                            .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<AuthResult> task) {
+//                                    if (task.isSuccessful()) {
+//                                        // Sign in success, update UI with the signed-in user's information
+//                                        Log.d(TAG, "createUserWithEmail:success");
+//
+//                                    }
+//                                    else {
+//                                        // If sign in fails, display a message to the user.
+//                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                                        Toast.makeText(Register.this, "Authentication failed.",
+//                                                Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//
                 } else {
                     Toast.makeText(Register.this, "You must fill all the fields", Toast.LENGTH_SHORT).show();
                 }
@@ -189,23 +128,7 @@ public class Register extends AppCompatActivity {
     private Boolean isEmpty(String string) {
         return string.equals("");
     }
-    //private Boolean matchpass(String s1, String s2){return s1.equals(2);}
 
-
-    public void signInWithCredential(PhoneAuthCredential phoneAuthCredential){
-        OnCompleteListener<AuthResult> ol = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-
-
-                }
-            }
-        };
-
-
-        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(ol);
-    }
 }
 
 

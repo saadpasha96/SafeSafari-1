@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Safe Safari</string>
     <string name="title_activity_current_location">Map</string>
-    <string name="Password">Password</string>
+    <string name="Password">Code</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>
