@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Firebase
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseAuth mAuth;
     private EditText u_email, u_pw;
     private Button login_btn, register, forgotpassword;
     private ProgressBar progressBar;
@@ -38,9 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         setupFirebaseAuth();
-
+        mAuth = FirebaseAuth.getInstance();
         u_email = (EditText) findViewById(R.id.u_email_in);
         u_pw = (EditText) findViewById(R.id.u_pw_in);
 
@@ -57,12 +57,9 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pw).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-
-                            Toast.makeText(LoginActivity.this, "Voila!", Toast.LENGTH_SHORT).show();
-
                             Intent intent = new Intent(LoginActivity.this, CurrentLocation.class);
                             startActivity(intent);
+                            finish();
 
                     }
                 });
@@ -77,12 +74,11 @@ public class LoginActivity extends AppCompatActivity {
                 //Intent to Register
                 Intent intent = new Intent(LoginActivity.this, Register.class);
                 startActivity(intent);
-
             }
         });
 
         forgotpassword = (Button) findViewById(R.id.pass_reset);
-        
+
 
     }
 
@@ -94,9 +90,11 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
-                } else {
+                }
+                else {
                     Log.d(TAG, "onAuthStateChanged: signed_out: ");
                 }
+                Toast.makeText(LoginActivity.this, "In that activity", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -113,6 +111,17 @@ public class LoginActivity extends AppCompatActivity {
     }
     protected void onStart(){
         super.onStart();
-        FirebaseAuth.getInstance().addAuthStateListener(mAuthStateListener);
+        FirebaseUser user = mAuth.getCurrentUser();
+//        Toast.makeText(LoginActivity.this, "Voila!" + user, Toast.LENGTH_SHORT).show();
+        updateUI(user);
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if(user == null) {
+        }else {
+            Intent intent = new Intent(this, CurrentLocation.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

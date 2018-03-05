@@ -12,10 +12,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.TimeUnit;
 
 public class Register extends AppCompatActivity {
 
@@ -26,14 +31,66 @@ public class Register extends AppCompatActivity {
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
+    String code,phoneNumber,mVerificationId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        phoneNumber = "03336118070";
 
 
-        name = (EditText) findViewById(R.id.name);
+
+
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks ov = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+
+                signInWithCredential(phoneAuthCredential);
+            }
+
+            @Override
+            public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                super.onCodeSent(s, forceResendingToken);
+                mVerificationId = s;
+            }
+
+            @Override
+            public void onCodeAutoRetrievalTimeOut(String s) {
+                super.onCodeAutoRetrievalTimeOut(s);
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+
+
+            }
+        };
+
+            PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber,60, TimeUnit.SECONDS,this,ov);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            name = (EditText) findViewById(R.id.name);
         email = (EditText) findViewById(R.id.email);
 
         password = (EditText) findViewById(R.id.password);
@@ -132,6 +189,23 @@ public class Register extends AppCompatActivity {
     private Boolean isEmpty(String string) {
         return string.equals("");
     }
-    //private Boolean matchpass(String s1, String s2){return s1.equals(s2);}
+    //private Boolean matchpass(String s1, String s2){return s1.equals(2);}
 
+
+    public void signInWithCredential(PhoneAuthCredential phoneAuthCredential){
+        OnCompleteListener<AuthResult> ol = new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+
+
+                }
+            }
+        };
+
+
+        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(ol);
+    }
 }
+
+
