@@ -32,6 +32,7 @@ public class PhoneLogin extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
+    private FirebaseAuth.AuthStateListener mAuthstateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +65,27 @@ public class PhoneLogin extends AppCompatActivity {
 
             }
         });
+
+        mAuthstateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (mAuth.getCurrentUser() !=null){
+//                    startActivity(new Intent(PhoneLogin.this, exampleMain.class));
+                    Toast.makeText(PhoneLogin.this, "Already Registered", Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                    Toast.makeText(PhoneLogin.this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
                 signInWithPhoneAuthCredential(phoneAuthCredential);
+
 
             }
 
@@ -126,13 +143,18 @@ public class PhoneLogin extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        if(mAuth.getCurrentUser() == null){
+        //String checkuser = mAuth.getCurrentUser().getUid();
+//        if(mAuth.getCurrentUser() == null){
+//
+//            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
+//        }
+//        else() {
+//            Toast.makeText(this, "You're Registered!", Toast.LENGTH_SHORT).show();
+//
+//        }
 
-            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
-        }
-        else {
-
-        }
+    //Checking If user is Already LOGGED IN
+        mAuth.addAuthStateListener(mAuthstateListener);
     }
 
 

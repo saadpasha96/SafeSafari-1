@@ -38,7 +38,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         name = (EditText) findViewById(R.id.name);
-        phone = (EditText) findViewById(R.id.phone);
+        //phone = (EditText) findViewById(R.id.phone);
         guard_name = (EditText) findViewById(R.id.guard_name);
         guard_phone = (EditText) findViewById(R.id.guard_phone);
         register = (Button) findViewById(R.id.Register);
