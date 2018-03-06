@@ -1,5 +1,6 @@
 package pashainc.google.com.safesafari;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class PhoneLogin extends AppCompatActivity {
     String TAG = "PhoneAuth";
 
     private FirebaseAuth mAuth;
+//    private ProgressDialog  pbar;
     private EditText userPhone, verfCode;
     private Button loginBtn, send_code;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
@@ -34,11 +36,13 @@ public class PhoneLogin extends AppCompatActivity {
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private FirebaseAuth.AuthStateListener mAuthstateListener;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonelogin);
 
+//        pbar = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
 
         userPhone = (EditText) findViewById(R.id.user_phone);
@@ -70,8 +74,10 @@ public class PhoneLogin extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() !=null){
-//                    startActivity(new Intent(PhoneLogin.this, exampleMain.class));
-                    Toast.makeText(PhoneLogin.this, "Already Registered", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(PhoneLogin.this, Register.class));
+                    Toast.makeText(PhoneLogin.this, "Member Registered", Toast.LENGTH_SHORT).show();
+//                    Intent Register = new Intent(PhoneLogin.this, Register.class);
+//                    startActivity(Register);
 
                 }
                 else {
@@ -84,7 +90,9 @@ public class PhoneLogin extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
+//                pbar.setMessage("Authenticating");
                 signInWithPhoneAuthCredential(phoneAuthCredential);
+//                pbar.show();
 
 
             }
@@ -121,9 +129,10 @@ public class PhoneLogin extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-                            FirebaseUser user = task.getResult().getUser();
+                            //FirebaseUser user = task.getResult().getUser();
                             Intent Register = new Intent(PhoneLogin.this, Register.class);
                             startActivity(Register);
+
                             //Toast.makeText(PhoneLogin.this, "Signed IN", Toast.LENGTH_SHORT).show();
 
 
@@ -148,7 +157,7 @@ public class PhoneLogin extends AppCompatActivity {
 //
 //            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
 //        }
-//        else() {
+//        else {
 //            Toast.makeText(this, "You're Registered!", Toast.LENGTH_SHORT).show();
 //
 //        }

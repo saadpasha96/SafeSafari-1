@@ -18,16 +18,29 @@
         android:layout_height="100dp"
         tools:context="pashainc.google.com.safesafari.CurrentLocation" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+
 
 </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/ridebtn"
+            android:layout_width="218dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/buttonshape"
+            android:text="Ride  Now"
+            android:textColor="#FFFF"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

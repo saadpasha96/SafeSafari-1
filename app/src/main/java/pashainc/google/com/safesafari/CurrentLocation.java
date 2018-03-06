@@ -3,6 +3,7 @@ package pashainc.google.com.safesafari;
 import android.*;
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +16,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,10 +33,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class CurrentLocation extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
 
     private String TAG = "Safe Safari";
 
@@ -42,12 +50,48 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
+    private Button ridenow;
+
+//    @Override
+//    public void onStart(){
+//        super.onStart();
+//
+//        mAuth.addAuthStateListener(mAuthStateListener);
+//
+//
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_location);
 
+        ridenow = (Button) findViewById(R.id.ridebtn);
+        mAuth = FirebaseAuth.getInstance();
+
+        ridenow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CurrentLocation.this, vehicleData_GET.class);
+                startActivity(intent);
+            }
+        });
+
+//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (mAuth.getCurrentUser() !=null){
+////                    startActivity(new Intent(PhoneLogin.this, exampleMain.class));
+//                    Toast.makeText(CurrentLocation.this, "Already Registered", Toast.LENGTH_SHORT).show();
+//
+//                }
+//                else {
+//                    Intent intent = new Intent(CurrentLocation.this, PhoneLogin.class);
+//                    startActivity(intent);
+//                }
+//            }
+//        };
+//
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -56,7 +100,6 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
     }
 

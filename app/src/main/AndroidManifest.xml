@@ -34,7 +34,9 @@
 
         <activity
             android:name=".CurrentLocation"
-            android:label="@string/title_activity_current_location" />
+            android:label="@string/title_activity_current_location">
+
+        </activity>
 
         <activity android:name=".PhoneLogin">
             <intent-filter>
@@ -45,11 +47,11 @@
         </activity>
 
         <activity android:name=".DrawerActivity" />
-        <activity android:name=".Slider" />
-
-        <activity android:name=".exampleMain">
+        <activity android:name=".exampleMain" />
+        <activity android:name=".vehicleData_GET">
 
         </activity>
+        <activity android:name=".vehicleData_POST"/>
     </application>
 
 </manifest>

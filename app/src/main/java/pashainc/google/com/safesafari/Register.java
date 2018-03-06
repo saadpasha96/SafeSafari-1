@@ -1,5 +1,6 @@
 package pashainc.google.com.safesafari;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,8 +31,20 @@ public class Register extends AppCompatActivity {
     private ProgressBar pbar;
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     String code,phoneNumber,mVerificationId;
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        //mAuth.addAuthStateListener(mAuthStateListener);
+
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +60,25 @@ public class Register extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+//                mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (mAuth.getCurrentUser() !=null){
+////                    startActivity(new Intent(PhoneLogin.this, exampleMain.class));
+//                    Toast.makeText(Register.this, "Already Registered", Toast.LENGTH_SHORT).show();
+////                    Intent intent = new Intent(Register.this, PhoneLogin.class);
+////                    startActivity(intent);
+//
+//                    finish();
+//                }
+//                else {
+//                    Toast.makeText(Register.this, "Please Fill Form", Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        };
+
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +93,9 @@ public class Register extends AppCompatActivity {
                     mDatabaseUID.child("Guardian Phone").setValue(guard_phone.getText().toString());
 
                     Toast.makeText(Register.this, "Success!", Toast.LENGTH_SHORT).show();
+
+                    Intent Register = new Intent(Register.this, CurrentLocation.class);
+                    startActivity(Register);
 
 //                    //NewUserReg(email.getText().toString(), password.getText().toString());
 //                    mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())

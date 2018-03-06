@@ -21,17 +21,17 @@ public class exampleMain extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        if (mAuth.getCurrentUser() == null ){
-            Intent intent = new Intent(exampleMain.this, PhoneLogin.class);
-            startActivity(intent);
-        }
-        else{
-            Toast.makeText(this, "All DONE!", Toast.LENGTH_SHORT).show();
-        }
-
-
-    }
+//    @Override
+//    public void onStart(){
+//        super.onStart();
+//        if (mAuth.getCurrentUser() == null ){
+//            Intent intent = new Intent(exampleMain.this, PhoneLogin.class);
+//            startActivity(intent);
+//        }
+//        else{
+//            Toast.makeText(this, "All DONE!", Toast.LENGTH_SHORT).show();
+//        }
+//
+//
+//    }
 }
