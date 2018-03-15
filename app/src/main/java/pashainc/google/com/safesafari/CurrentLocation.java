@@ -165,7 +165,6 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 
 	}
 
-
 	private void DrawRoute(LatLng dest_latlng) {
 		Routing routing = new Routing.Builder()
 				.travelMode(Routing.TravelMode.DRIVING)

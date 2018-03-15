@@ -2,6 +2,7 @@ package pashainc.google.com.safesafari;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,11 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +41,7 @@ public class PhoneLogin extends AppCompatActivity {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private FirebaseAuth.AuthStateListener mAuthstateListener;
+    public DatabaseReference mDatabase;
 
 
     @Override
@@ -46,8 +53,6 @@ public class PhoneLogin extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         userPhone = (EditText) findViewById(R.id.user_phone);
-//        verfCode = (EditText) findViewById(R.id.verf_code);
-//        loginBtn = (Button) findViewById(R.id.login_btn);
         send_code = (Button) findViewById(R.id.send_code);
 
         send_code.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +71,6 @@ public class PhoneLogin extends AppCompatActivity {
                         PhoneLogin.this,
                         mCallbacks
                 );
-
             }
         });
 
@@ -74,14 +78,45 @@ public class PhoneLogin extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() !=null){
-                    startActivity(new Intent(PhoneLogin.this, Register.class));
-                    Toast.makeText(PhoneLogin.this, "Member Registered", Toast.LENGTH_SHORT).show();
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    mDatabase = FirebaseDatabase.getInstance().getReference();
+
+                    final String key = mAuth.getCurrentUser().getUid();
+
+                    DatabaseReference mDatabaseUID = mDatabase.child("User");
+
+                    mDatabaseUID.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.hasChild(key)) {
+                                // run some code
+                                Intent currentLocation = new Intent(PhoneLogin.this, CurrentLocation.class);
+                                startActivity(currentLocation);
+                            }else{
+                                Intent register = new Intent(PhoneLogin.this, Register.class);
+                                startActivity(register);
+                            }
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+///////////////////////////////////////////////////////////////////////////////////////
+                    Log.e("msg","kry: "+ key);
+
 //                    Intent Register = new Intent(PhoneLogin.this, Register.class);
 //                    startActivity(Register);
 
                 }
                 else {
                     Toast.makeText(PhoneLogin.this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
+
+
+
+                    //startActivity(new Intent(PhoneLogin.this, Register.class));
                 }
             }
         };
@@ -129,10 +164,33 @@ public class PhoneLogin extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-                            //FirebaseUser user = task.getResult().getUser();
-                            Intent Register = new Intent(PhoneLogin.this, Register.class);
-                            startActivity(Register);
+//////////////////////////////////////////////////////////////////////////////////
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
 
+                            final String key = mAuth.getCurrentUser().getUid();
+
+                            DatabaseReference mDatabaseUID = mDatabase.child("User");
+
+                            mDatabaseUID.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.hasChild(key)) {
+                                        // run some code
+                                        Intent currentLocation = new Intent(PhoneLogin.this, CurrentLocation.class);
+                                        startActivity(currentLocation);
+                                    }else{
+                                        Intent register = new Intent(PhoneLogin.this, Register.class);
+                                        startActivity(register);
+                                    }
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+///////////////////////////////////////////////////////////////////////////////////////
                             //Toast.makeText(PhoneLogin.this, "Signed IN", Toast.LENGTH_SHORT).show();
 
 

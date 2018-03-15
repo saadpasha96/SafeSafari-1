@@ -31,16 +31,10 @@ public class Register extends AppCompatActivity {
     private ProgressBar pbar;
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-    String code,phoneNumber,mVerificationId;
 
     @Override
     public void onStart(){
         super.onStart();
-
-        //mAuth.addAuthStateListener(mAuthStateListener);
-
 
     }
 
