@@ -20,10 +20,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,217 +42,309 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
+
 public class CurrentLocation extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
+		GoogleApiClient.OnConnectionFailedListener,
+		com.google.android.gms.location.LocationListener,
+		RoutingListener {
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+	private String TAG = "Safe Safari";
+	private GoogleMap mMap;
+	private GoogleApiClient client;
+	private LocationRequest locationRequest;
+	private FusedLocationProviderClient fusedLocationProviderClient;
+	private Marker mCurrLocationMarker;
+	private Location lastlocation;
+	private List<Polyline> polylines;
+	private double total_distance;
+	private LatLng dest_latlng;
+	private Marker dest_marker;
+	private Button ridenow;
 
+	private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 
-    private String TAG = "Safe Safari";
+	public static final int REQUEST_LOCATION_CODE = 99;
 
-    private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    LocationRequest mLocationRequest;
-    private Button ridenow;
-
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//
-//        mAuth.addAuthStateListener(mAuthStateListener);
-//
-//
-//    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_current_location);
-
-        ridenow = (Button) findViewById(R.id.ridebtn);
-        mAuth = FirebaseAuth.getInstance();
-
-        ridenow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CurrentLocation.this, vehicleData_GET.class);
-                startActivity(intent);
-            }
-        });
-
-//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if (mAuth.getCurrentUser() !=null){
-////                    startActivity(new Intent(PhoneLogin.this, exampleMain.class));
-//                    Toast.makeText(CurrentLocation.this, "Already Registered", Toast.LENGTH_SHORT).show();
-//
-//                }
-//                else {
-//                    Intent intent = new Intent(CurrentLocation.this, PhoneLogin.class);
-//                    startActivity(intent);
-//                }
-//            }
-//        };
-//
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
-            }
-        }
-        else {
-            buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
-        }
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
+	static float checkDistance = 0;
+	int count = 0;
+	Boolean flag = true;
 
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_current_location);
 
-    }
+		ridenow = (Button) findViewById(R.id.ridebtn);
 
-    @Override
-    public void onConnectionSuspended(int i) {
+		ridenow.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(CurrentLocation.this, vehicleData_GET.class);
+				startActivity(intent);
+			}
+		});
+		polylines = new ArrayList<>();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			checklocationPermission();
+		}
 
-    }
+		// Obtain the SupportMapFragment and get notified when the map is ready to be used.
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map);
+		mapFragment.getMapAsync(this);
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+		final MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.draggable(true);
 
-        Toast.makeText(CurrentLocation.this,"Error in connection"+TAG,Toast.LENGTH_LONG).show();
+		//**********************Places Search*********************
 
-    }
+		PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+				getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-    @Override
-    public void onLocationChanged(Location location) {
+		autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+			@Override
+			public void onPlaceSelected(Place place) {
+				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
+				dest_latlng = place.getLatLng();
 
-        mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-        double Latitude = location.getLatitude();
-        double Longitude = location.getLongitude();
+				DrawRoute(dest_latlng);
+				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
+						.icon(BitmapDescriptorFactory.defaultMarker(HUE_BLUE)));
+				//Camera Properties
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
+			}
 
+			@Override
+			public void onError(Status status) {
+				// TODO: Handle the error.
+			}
+		});
+	}
 
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-
-    }
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
-    public boolean checkLocationPermission(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		switch (requestCode) {
+			case REQUEST_LOCATION_CODE:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					//permission granted
+					if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+						if (client == null) {
+							buildGoogleApiClient();
+						}
+						mMap.setMyLocationEnabled(true);
+					}
+					//permission not granted
+					else {
+						Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+					}
+				}
+		}
+	}
 
 
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
+	@Override
+	public void onMapReady(GoogleMap googleMap) {
+		mMap = googleMap;
 
-                        if (mGoogleApiClient == null) {
-                            buildGoogleApiClient();
-                        }
-                        mMap.setMyLocationEnabled(true);
-                    }
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                } else {
+			buildGoogleApiClient();
 
+			mMap.setMyLocationEnabled(true);
 
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
+		}
+
+	}
 
 
-        }
-    }
+	private void DrawRoute(LatLng dest_latlng) {
+		Routing routing = new Routing.Builder()
+				.travelMode(Routing.TravelMode.DRIVING)
+				.withListener(this)
+				.alternativeRoutes(false)
+				.waypoints(new LatLng(lastlocation.getLatitude(), lastlocation.getLongitude()), dest_latlng)
+				.build();
+		routing.execute();
+
+	}
+
+	protected synchronized void buildGoogleApiClient() {
+		client = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API)
+				.build();
+		client.connect();
+	}
+
+	@Override
+	public void onConnected(@Nullable Bundle bundle) {
+		locationRequest = new LocationRequest();
+		locationRequest.setInterval(5000);
+		locationRequest.setFastestInterval(5000);
+		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
+			LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
+		}
+	}
+
+	public boolean checklocationPermission() {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
+			} else {
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
+			}
+			return false;
+
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+
+	}
+
+	@Override
+	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+	}
+
+	@Override
+	public void onLocationChanged(final Location location) {
+		lastlocation = location;
+
+		if (mCurrLocationMarker != null) {
+			mCurrLocationMarker.remove();
+		}
+
+		//Getting Start Location Coordinates
+		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+
+		//Setting Up the the Marker
+		MarkerOptions markerOptions = new MarkerOptions();
+		markerOptions.position(latLng);
+		markerOptions.title("Current Location");
+		markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+		markerOptions.draggable(false);
+
+
+		//Updating Maker
+		mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+		//Camera Properties
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+		Log.d("LOC", "Changed");
+
+
+		if (dest_latlng != null)
+		{
+			float[] result = new float[1];
+
+			Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
+
+			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
+			Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
+
+			if (flag)
+			{
+				checkDistance = curr_distance;
+				Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
+				flag = false;
+			}
+			else
+			{
+				if (checkDistance < curr_distance)
+				{
+					count++;
+					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
+					if (count >= 10)
+					{
+						Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
+					}
+				}
+				else
+				{
+					count = 0;
+					checkDistance = curr_distance;
+				}
+
+			}
+		}
+	}
+
+
+	//Routing Listeners
+	@Override
+	public void onRoutingFailure(RouteException e)
+	{
+		if (e != null)
+		{
+			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onRoutingStart() {
+
+	}
+
+	@Override
+	public void onRoutingSuccess(ArrayList<Route> routes, int shortestrouteindex) {
+
+		if (polylines.size() > 0)
+		{
+			for (Polyline poly : polylines)
+			{
+				poly.remove();
+			}
+		}
+
+		polylines = new ArrayList<>();
+		//add route(s) to the map.
+		for (int i = 0; i < routes.size(); i++) {
+
+			//In case of more than 5 alternative routes
+			int colorIndex = i % COLORS.length;
+
+			PolylineOptions polyOptions = new PolylineOptions();
+			polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+			polyOptions.width(15 + i * 3);
+			polyOptions.addAll(routes.get(i).getPoints());
+			Polyline polyline = mMap.addPolyline(polyOptions);
+			polylines.add(polyline);
+
+			//Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ routes.get(i).getDistanceValue()+": duration - "+ routes.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+
+		}
+
+		total_distance = routes.get(0).getDistanceValue();
+
+
+		Toast.makeText(this, "Route Distance(in KM) is" + total_distance / 1000, Toast.LENGTH_SHORT).show();
+
+	}
+
+	@Override
+	public void onRoutingCancelled() {
+
+	}
+
+
 }

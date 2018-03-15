@@ -77,7 +77,7 @@ public class vehicleData_GET extends AppCompatActivity {
 //                                myIntent.putExtra("details", vehicleData ); //Optional parameters
 //                                startActivity(myIntent);
 
-                                
+
                             }
                         },
                         new Response.ErrorListener() {
