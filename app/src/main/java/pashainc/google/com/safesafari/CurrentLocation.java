@@ -5,12 +5,14 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +22,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.media.session.MediaButtonReceiver;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -54,6 +58,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
 
 public class CurrentLocation extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -274,7 +279,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				{
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 2)
+					if (count >= 5)
 					{
 						Notification();
 						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
@@ -302,11 +307,31 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		bigText.setBigContentTitle("Today's Bible Verse");
 		bigText.setSummaryText("Text in detail");
 
+//		Intent snoozeIntent = new Intent(this, CurrentLocation.class);
+//		snoozeIntent.setAction("Snooze");
+//		snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 1);
+//		PendingIntent snoozePendingIntent =
+//				PendingIntent.getActivity(this, 1, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 		mBuilder.setSmallIcon(R.drawable.icon);
 		mBuilder.setContentTitle("Your Title");
 		mBuilder.setContentText("Your text");
+		mBuilder.setCategory(Notification.CATEGORY_ALARM);
 		mBuilder.setPriority(Notification.PRIORITY_MAX);
 		mBuilder.setStyle(bigText);
+		mBuilder.setVisibility(2);
+		mBuilder.addAction(new NotificationCompat.Action(
+				R.drawable.phone_icon, "Snooze",
+				MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+						PlaybackStateCompat.ACTION_PLAY_PAUSE)));
+		//mBuilder.addAction(R.drawable.email_icon, "Snooze", snoozePendingIntent);
+
+
+		//Playing Audio
+		int resID = R.raw.alert;
+		MediaPlayer alert = MediaPlayer.create(this, resID);
+		alert.start();
+
 
 		NotificationManager mNotificationManager =
 				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
