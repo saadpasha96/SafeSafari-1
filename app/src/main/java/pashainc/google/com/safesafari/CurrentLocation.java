@@ -2,6 +2,9 @@ package pashainc.google.com.safesafari;
 
 import android.*;
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +17,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -269,9 +274,11 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				{
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 10)
+					if (count >= 2)
 					{
-						Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
+						Notification();
+						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
+
 					}
 				}
 				else
@@ -282,6 +289,40 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 
 			}
 		}
+
+
+	}
+
+	private void Notification(){
+
+		NotificationCompat.Builder mBuilder =
+				new NotificationCompat.Builder(this, "notify_001");
+
+		NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+		bigText.setBigContentTitle("Today's Bible Verse");
+		bigText.setSummaryText("Text in detail");
+
+		mBuilder.setSmallIcon(R.drawable.icon);
+		mBuilder.setContentTitle("Your Title");
+		mBuilder.setContentText("Your text");
+		mBuilder.setPriority(Notification.PRIORITY_MAX);
+		mBuilder.setStyle(bigText);
+
+		NotificationManager mNotificationManager =
+				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationChannel channel = new NotificationChannel("notify_001",
+					"Channel human readable title",
+					NotificationManager.IMPORTANCE_DEFAULT);
+			mNotificationManager.createNotificationChannel(channel);
+		}
+
+		mNotificationManager.notify(0, mBuilder.build());
+
+
+
 	}
 
 
