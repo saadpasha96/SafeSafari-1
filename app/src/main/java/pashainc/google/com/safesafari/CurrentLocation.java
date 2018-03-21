@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,6 +34,8 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -53,12 +56,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Notification.EXTRA_NOTIFICATION_ID;
+import static android.os.Build.VERSION_CODES.O;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
 
 public class CurrentLocation extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -69,6 +77,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	private String TAG = "Safe Safari";
 	private GoogleMap mMap;
 	private GoogleApiClient client;
+	GoogleApiClient aclient;
 	private LocationRequest locationRequest;
 	private FusedLocationProviderClient fusedLocationProviderClient;
 	private Marker mCurrLocationMarker;
@@ -77,7 +86,13 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	private double total_distance;
 	private LatLng dest_latlng;
 	private Marker dest_marker;
+	private Marker start_marker;
 	private Button ridenow;
+	private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+	private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+	String time;
+	String user = mAuth.getCurrentUser().getUid();
 
 	private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 
@@ -86,12 +101,20 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
+	final DatabaseReference mDatabaseUID = mDatabase.child("User").child(user).child("rides").push();
+
+
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
+
+
+		 Long tsLong = System.currentTimeMillis()/1000;
+		 time = tsLong.toString() ;
+
 
 		ridenow = (Button) findViewById(R.id.ridebtn);
 
@@ -102,7 +125,9 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				startActivity(intent);
 			}
 		});
+
 		polylines = new ArrayList<>();
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			checklocationPermission();
 		}
@@ -125,6 +150,17 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 			public void onPlaceSelected(Place place) {
 				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
 				dest_latlng = place.getLatLng();
+
+
+				////***********GEOFIRING*************************
+//				mDatabaseUID.child("dest").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+//					@Override
+//					public void onSuccess(Void aVoid) {
+//						Toast.makeText(CurrentLocation.this, "DEST LOC OK!", Toast.LENGTH_SHORT).show();
+//					}
+//				});
+				////***********GEOFIRING*************************
+
 
 				DrawRoute(dest_latlng);
 				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
@@ -192,7 +228,19 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				.addApi(LocationServices.API)
 				.build();
 		client.connect();
+
 	}
+
+//	protected synchronized void abuildGoogleApiClient() {
+//
+//		aclient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+//				.addOnConnectionFailedListener(this)
+//				.addApi(LocationServices.API)
+//				.build();
+//		aclient.connect();
+//
+//		//Toast.makeText(this, "ACLIENT DONE", Toast.LENGTH_SHORT).show();
+//	}
 
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
@@ -204,7 +252,15 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
 			LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
 		}
+
+
+//		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
+//			LocationServices.FusedLocationApi.requestLocationUpdates(aclient, locationRequest, this);
+//
+//		}
+
 	}
+
 
 	public boolean checklocationPermission() {
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -253,13 +309,13 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		//Updating Maker
 		mCurrLocationMarker = mMap.addMarker(markerOptions);
 
+
 		//Camera Properties
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 		Log.d("LOC", "Changed");
 
 
-		if (dest_latlng != null)
-		{
+		if (dest_latlng != null) {
 			float[] result = new float[1];
 
 			Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
@@ -267,65 +323,74 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
 			Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
 
-			if (flag)
-			{
+			if (flag) {
 				checkDistance = curr_distance;
 				Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
+
+				//Storing Start Position
+				if (client != null) {
+					mDatabaseUID.child("start").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+						@Override
+						public void onSuccess(Void Void) {
+							Toast.makeText(CurrentLocation.this, "Start LOC OK!", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+
 				flag = false;
-			}
-			else
-			{
-				if (checkDistance < curr_distance)
-				{
+			} else {
+				if (checkDistance < curr_distance) {
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 5)
-					{
+					if (count >= 5) {
 						Notification();
 						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
-
 					}
-				}
-				else
-				{
+				} else {
 					count = 0;
 					checkDistance = curr_distance;
 				}
-
 			}
 		}
 
 
+//		if (client !=null) {
+//			start_marker = mMap.addMarker(new MarkerOptions().position(latLng));
+//			mDatabaseUID.child("start").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+//				@Override
+//				public void onSuccess(Void aVoid) {
+//					Toast.makeText(CurrentLocation.this, "Start LOC OK!", Toast.LENGTH_SHORT).show();
+//				}
+//			});
+//			start_marker.remove();
+//			Toast.makeText(this, "Marker Added", Toast.LENGTH_SHORT).show();
+//			LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+//		}
+//
+//	}
 	}
-
 	private void Notification(){
 
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(this, "notify_001");
 
 		NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-		bigText.setBigContentTitle("Today's Bible Verse");
-		bigText.setSummaryText("Text in detail");
+		bigText.setBigContentTitle("ALERT!!");
+		bigText.setSummaryText("Press Snooze Button to ENSURE your Safety");
 
-//		Intent snoozeIntent = new Intent(this, CurrentLocation.class);
-//		snoozeIntent.setAction("Snooze");
-//		snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 1);
-//		PendingIntent snoozePendingIntent =
-//				PendingIntent.getActivity(this, 1, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		Intent snoozeIntent = new Intent(this, CurrentLocation.class);
+		//snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 1);
+		PendingIntent snoozePendingIntent =
+				PendingIntent.getBroadcast(this, 1, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		mBuilder.setSmallIcon(R.drawable.icon);
-		mBuilder.setContentTitle("Your Title");
-		mBuilder.setContentText("Your text");
+		mBuilder.setContentTitle("Alert Notification");
+		mBuilder.setContentText("Press Snooze");
 		mBuilder.setCategory(Notification.CATEGORY_ALARM);
 		mBuilder.setPriority(Notification.PRIORITY_MAX);
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
-		mBuilder.addAction(new NotificationCompat.Action(
-				R.drawable.phone_icon, "Snooze",
-				MediaButtonReceiver.buildMediaButtonPendingIntent(this,
-						PlaybackStateCompat.ACTION_PLAY_PAUSE)));
-		//mBuilder.addAction(R.drawable.email_icon, "Snooze", snoozePendingIntent);
-
+		mBuilder.addAction(R.drawable.phone_icon, "Snooze", snoozePendingIntent);
 
 		//Playing Audio
 		int resID = R.raw.alert;
@@ -337,7 +402,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+		if (Build.VERSION.SDK_INT >= O) {
 			NotificationChannel channel = new NotificationChannel("notify_001",
 					"Channel human readable title",
 					NotificationManager.IMPORTANCE_DEFAULT);
@@ -410,6 +475,5 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	public void onRoutingCancelled() {
 
 	}
-
 
 }
