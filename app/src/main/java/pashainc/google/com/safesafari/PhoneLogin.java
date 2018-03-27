@@ -49,7 +49,6 @@ public class PhoneLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonelogin);
 
-//        pbar = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
 
         userPhone = (EditText) findViewById(R.id.user_phone);
@@ -107,28 +106,21 @@ public class PhoneLogin extends AppCompatActivity {
 ///////////////////////////////////////////////////////////////////////////////////////
                     Log.e("msg","kry: "+ key);
 
-//                    Intent Register = new Intent(PhoneLogin.this, Register.class);
-//                    startActivity(Register);
-
                 }
                 else {
                     Toast.makeText(PhoneLogin.this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
-
-
-
-                    //startActivity(new Intent(PhoneLogin.this, Register.class));
                 }
             }
         };
+
+
+
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-//                pbar.setMessage("Authenticating");
                 signInWithPhoneAuthCredential(phoneAuthCredential);
-//                pbar.show();
-
 
             }
 
@@ -154,6 +146,8 @@ public class PhoneLogin extends AppCompatActivity {
         };
 
     }
+
+
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
@@ -191,10 +185,7 @@ public class PhoneLogin extends AppCompatActivity {
                                 }
                             });
 ///////////////////////////////////////////////////////////////////////////////////////
-                            //Toast.makeText(PhoneLogin.this, "Signed IN", Toast.LENGTH_SHORT).show();
 
-
-                            // ...
                         } else {
                             // Sign in failed, display a message and update the UI
                             Toast.makeText(PhoneLogin.this, "Sign In Failed!", Toast.LENGTH_SHORT).show();
@@ -210,17 +201,6 @@ public class PhoneLogin extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        //String checkuser = mAuth.getCurrentUser().getUid();
-//        if(mAuth.getCurrentUser() == null){
-//
-//            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
-//        }
-//        else {
-//            Toast.makeText(this, "You're Registered!", Toast.LENGTH_SHORT).show();
-//
-//        }
-
-    //Checking If user is Already LOGGED IN
         mAuth.addAuthStateListener(mAuthstateListener);
     }
 
