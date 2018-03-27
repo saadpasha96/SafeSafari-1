@@ -116,6 +116,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 //		int resID = R.raw.alert;
 //
 //		alert = MediaPlayer.create(this, resID);
+		Notification();
 
 
 		Long tsLong = System.currentTimeMillis()/1000;
@@ -322,6 +323,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
 					if (count >= 2) {
 						Notification();
+
 						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
 					}
 				} else {

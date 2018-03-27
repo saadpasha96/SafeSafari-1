@@ -48,6 +48,8 @@
         <activity android:name=".SplashScreen"
                   android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <receiver android:name=".AlertReceiver"></receiver>
     </application>
 
 </manifest>

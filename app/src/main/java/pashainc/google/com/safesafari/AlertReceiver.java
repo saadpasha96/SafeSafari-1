@@ -14,16 +14,17 @@ public class AlertReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		Toast.makeText(context, "Hii", Toast.LENGTH_SHORT).show();
-//		MediaP m = new MediaP(context);
-//		//MediaPlayer mp = m.mpr();
-//
-//		if(m.mp!=null && m.mp.isPlaying()){
-//			m.mp.pause();
-//			Toast.makeText(context, "CALLING", Toast.LENGTH_SHORT).show();
-//		}else{
-//			Toast.makeText(context, "Not playing", Toast.LENGTH_SHORT).show();
-//
-//		}
+//		Toast.makeText(context, "Hii", Toast.LENGTH_SHORT).show();
+		MediaP m = new MediaP(context);
+		//MediaPlayer mp = m.mpr();
+
+		if(m.mp!=null && m.mp.isPlaying()){
+			m.mp.pause();
+			Toast.makeText(context, "CALLING", Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(context, "Not playing", Toast.LENGTH_SHORT).show();
+		Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+		context.sendBroadcast(it);
+		}
 	}
 }
