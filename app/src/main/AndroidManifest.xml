@@ -35,18 +35,22 @@
             android:name=".CurrentLocation"
             android:label="@string/title_activity_current_location" />
         <activity android:name=".PhoneLogin">
+
+        </activity>
+        <activity android:name=".DrawerActivity" />
+        <activity android:name=".vehicleData_GET" />
+        <activity android:name=".vehicleData_POST" />
+        <activity android:name=".HistoryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrawerActivity" />
-        <activity android:name=".vehicleData_GET" />
-        <activity android:name=".vehicleData_POST" />
-        <activity android:name=".HistoryActivity"></activity>
 
         <activity android:name=".SplashScreen"
                   android:theme="@style/AppTheme.NoActionBar">
+
+
         </activity>
 
         <receiver android:name=".AlertReceiver"></receiver>

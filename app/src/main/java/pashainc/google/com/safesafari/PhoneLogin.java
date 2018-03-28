@@ -43,11 +43,15 @@ public class PhoneLogin extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthstateListener;
     public DatabaseReference mDatabase;
 
+    SessionMgt session;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonelogin);
+
+        session = new SessionMgt(getApplicationContext());
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -73,7 +77,7 @@ public class PhoneLogin extends AppCompatActivity {
             }
         });
 
-        mAuthstateListener = new FirebaseAuth.AuthStateListener() {
+        /*mAuthstateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (mAuth.getCurrentUser() !=null){
@@ -111,7 +115,7 @@ public class PhoneLogin extends AppCompatActivity {
                     Toast.makeText(PhoneLogin.this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
                 }
             }
-        };
+        };*/
 
 
 
@@ -136,7 +140,6 @@ public class PhoneLogin extends AppCompatActivity {
                                    PhoneAuthProvider.ForceResendingToken token) {
 
                 Log.d(TAG, "onCodeSent:" + verificationId);
-
 
                 mVerificationId = verificationId;
                 mResendToken = token;
@@ -164,6 +167,8 @@ public class PhoneLogin extends AppCompatActivity {
                             final String key = mAuth.getCurrentUser().getUid();
 
                             DatabaseReference mDatabaseUID = mDatabase.child("User");
+
+                           // mDatabaseUID.setValue(key);
 
                             mDatabaseUID.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -201,7 +206,7 @@ public class PhoneLogin extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        mAuth.addAuthStateListener(mAuthstateListener);
+        //mAuth.addAuthStateListener(mAuthstateListener);
     }
 
 

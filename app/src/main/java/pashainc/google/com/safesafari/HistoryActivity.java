@@ -73,6 +73,7 @@ public class HistoryActivity extends AppCompatActivity {
 				String push = getRef(position).getKey();
 				DatabaseReference m = FirebaseDatabase.getInstance().getReference().child("rides").child(push);
 
+
 			}
 
 			@Override

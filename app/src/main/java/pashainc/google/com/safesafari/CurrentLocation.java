@@ -101,7 +101,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
-	final DatabaseReference mDatabaseUID = mDatabase.child("User").child(user).child("rides").push();
+	final DatabaseReference mDatabaseUID = mDatabase.child("Rides").child(user).child("rides").push();
 
 
 	public static MediaPlayer alert;
@@ -112,11 +112,6 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
-
-//		int resID = R.raw.alert;
-//
-//		alert = MediaPlayer.create(this, resID);
-		Notification();
 
 
 		Long tsLong = System.currentTimeMillis()/1000;
@@ -157,6 +152,13 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 			public void onPlaceSelected(Place place) {
 				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
 				dest_latlng = place.getLatLng();
+
+				mDatabaseUID.child("Dest").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+					@Override
+					public void onSuccess(Void Void) {
+						Toast.makeText(CurrentLocation.this, "Dest LOC Saved!", Toast.LENGTH_SHORT).show();
+					}
+				});
 
 				DrawRoute(dest_latlng);
 				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
@@ -299,6 +301,13 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 
 			Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
 
+//			mDatabaseUID.child("Last Loc").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+//				@Override
+//				public void onSuccess(Void Void) {
+//					//Toast.makeText(CurrentLocation.this, "Last Loc Saved!", Toast.LENGTH_SHORT).show();
+//				}
+//			});
+
 			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
 			Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
 
@@ -307,21 +316,21 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 				Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
 
 				//Storing Start Position
-				if (client != null) {
-					mDatabaseUID.child("start").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-						@Override
-						public void onSuccess(Void Void) {
-							Toast.makeText(CurrentLocation.this, "Start LOC OK!", Toast.LENGTH_SHORT).show();
-						}
-					});
-				}
+//				if (client != null) {
+//					mDatabaseUID.child("start").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+//						@Override
+//						public void onSuccess(Void Void) {
+//							Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
+//						}
+//					});
+//				}
 
 				flag = false;
 			} else {
 				if (checkDistance < curr_distance) {
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 2) {
+					if (count >= 3) {
 						Notification();
 
 						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
@@ -331,6 +340,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 					checkDistance = curr_distance;
 				}
 			}
+
 		}
 
 	}    private void Notification(){
