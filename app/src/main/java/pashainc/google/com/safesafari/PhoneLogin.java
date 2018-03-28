@@ -43,15 +43,13 @@ public class PhoneLogin extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthstateListener;
     public DatabaseReference mDatabase;
 
-    SessionMgt session;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonelogin);
-
-        session = new SessionMgt(getApplicationContext());
 
         mAuth = FirebaseAuth.getInstance();
 

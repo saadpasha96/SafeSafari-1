@@ -101,7 +101,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
-	final DatabaseReference mDatabaseUID = mDatabase.child("Rides").child(user).child("rides").push();
+	final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).child("user_rides").push();
 
 
 	public static MediaPlayer alert;
@@ -116,7 +116,6 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 
 		Long tsLong = System.currentTimeMillis()/1000;
 		 time = tsLong.toString() ;
-
 
 		ridenow = (Button) findViewById(R.id.ridebtn);
 
