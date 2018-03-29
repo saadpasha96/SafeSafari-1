@@ -29,13 +29,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -61,9 +60,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mikepenz.materialdrawer.Drawer;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static android.os.Build.VERSION_CODES.O;
@@ -101,10 +104,11 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
-	final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).child("user_rides").push();
+	final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
 
+	private Toolbar toolbar;
 
-	public static MediaPlayer alert;
+	DrawerUtil drawer = new DrawerUtil();
 
 
 
@@ -112,6 +116,11 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
+
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar.setTitle("Home");
+
+		drawer.getDrawer(this, toolbar);
 
 
 		Long tsLong = System.currentTimeMillis()/1000;

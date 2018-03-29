@@ -75,48 +75,6 @@ public class PhoneLogin extends AppCompatActivity {
             }
         });
 
-        /*mAuthstateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (mAuth.getCurrentUser() !=null){
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    mDatabase = FirebaseDatabase.getInstance().getReference();
-
-                    final String key = mAuth.getCurrentUser().getUid();
-
-                    DatabaseReference mDatabaseUID = mDatabase.child("User");
-
-                    mDatabaseUID.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            if (snapshot.hasChild(key)) {
-                                // run some code
-                                Intent currentLocation = new Intent(PhoneLogin.this, CurrentLocation.class);
-                                startActivity(currentLocation);
-                            }else{
-                                Intent register = new Intent(PhoneLogin.this, Register.class);
-                                startActivity(register);
-                            }
-                            finish();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-///////////////////////////////////////////////////////////////////////////////////////
-                    Log.e("msg","kry: "+ key);
-
-                }
-                else {
-                    Toast.makeText(PhoneLogin.this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };*/
-
-
-
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -198,13 +156,6 @@ public class PhoneLogin extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-
-        //mAuth.addAuthStateListener(mAuthstateListener);
     }
 
 

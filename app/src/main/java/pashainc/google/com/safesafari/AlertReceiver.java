@@ -14,9 +14,7 @@ public class AlertReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-//		Toast.makeText(context, "Hii", Toast.LENGTH_SHORT).show();
 		MediaP m = new MediaP(context);
-		//MediaPlayer mp = m.mpr();
 
 		if(m.mp!=null && m.mp.isPlaying()){
 			m.mp.pause();
