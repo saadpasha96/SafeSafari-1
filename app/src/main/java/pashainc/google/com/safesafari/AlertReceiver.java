@@ -19,10 +19,10 @@ public class AlertReceiver extends BroadcastReceiver {
 		if(m.mp!=null && m.mp.isPlaying()){
 			m.mp.pause();
 			Toast.makeText(context, "CALLING", Toast.LENGTH_SHORT).show();
+			Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+			context.sendBroadcast(it);
 		}else{
 			Toast.makeText(context, "Not playing", Toast.LENGTH_SHORT).show();
-		Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-		context.sendBroadcast(it);
 		}
 	}
 }

@@ -25,6 +25,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -72,7 +73,7 @@ import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static android.os.Build.VERSION_CODES.O;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
 
-public class CurrentLocation extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class CurrentLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener,
 		com.google.android.gms.location.LocationListener,
 		RoutingListener {
@@ -104,7 +105,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
-	final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
+	public final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
 
 	private Toolbar toolbar;
 
@@ -117,10 +118,10 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
 
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		toolbar.setTitle("Home");
-
-		drawer.getDrawer(this, toolbar);
+//		toolbar = (Toolbar) findViewById(R.id.toolbar);
+//		toolbar.setTitle("Home");
+//
+//		drawer.getDrawer(this, toolbar);
 
 
 		Long tsLong = System.currentTimeMillis()/1000;
@@ -317,11 +318,11 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 //			});
 
 			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
-			Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
 
 			if (flag) {
 				checkDistance = curr_distance;
-				Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
 
 				//Storing Start Position
 //				if (client != null) {
@@ -340,8 +341,7 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
 					if (count >= 3) {
 						Notification();
-
-						//Toast.makeText(this, "Alarm", Toast.LENGTH_SHORT).show();
+						count =0;
 					}
 				} else {
 					count = 0;
@@ -367,10 +367,15 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		PendingIntent snoozePendingIntent =
 				PendingIntent.getBroadcast(this, 1, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+		Intent sendalert = new Intent(this, SmsSend.class);
+		PendingIntent alertPendingIntent =
+				PendingIntent.getBroadcast(this, 1, sendalert, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
 
 		Toast.makeText(this, "Build OK", Toast.LENGTH_SHORT).show();
 
-		mBuilder.setSmallIcon(R.drawable.phone_icon);
+		mBuilder.setSmallIcon(R.drawable.ic_warning_black_24dp);
 		mBuilder.setTicker("ALERT ALERT");
 		mBuilder.setContentTitle("Alert Notification");
 		mBuilder.setContentText("Press Snooze");
@@ -378,7 +383,9 @@ public class CurrentLocation extends FragmentActivity implements OnMapReadyCallb
 		mBuilder.setPriority(android.app.Notification.PRIORITY_MAX);
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
-		mBuilder.addAction(R.drawable.phone_icon, "Snooze", snoozePendingIntent);
+		mBuilder.setTimeoutAfter(5000);
+		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent);
+		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent);
 
 		MediaP m = new MediaP(getApplicationContext());
 		m.mp();

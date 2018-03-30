@@ -38,11 +38,13 @@ public class SplashScreen extends AppCompatActivity {
 			Toast.makeText(getApplicationContext(),"Exist",Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(SplashScreen.this,CurrentLocation.class);
 			startActivity(intent);
+			finish();
 			//Intent
 		}else{
 			Toast.makeText(getApplicationContext(),"Not Exist",Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(SplashScreen.this,PhoneLogin.class);
 			startActivity(intent);
+			finish();
 
 		}
 
