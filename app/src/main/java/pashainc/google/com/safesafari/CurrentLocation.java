@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.CursorIndexOutOfBoundsException;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -65,8 +67,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.materialdrawer.Drawer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,9 +87,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	private String TAG = "Safe Safari";
 	private GoogleMap mMap;
 	private GoogleApiClient client;
-	GoogleApiClient aclient;
 	private LocationRequest locationRequest;
-	private FusedLocationProviderClient fusedLocationProviderClient;
 	private Marker mCurrLocationMarker;
 	private Location lastlocation;
 	private List<Polyline> polylines;
@@ -118,6 +120,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	DrawerUtil drawer = new DrawerUtil();
 
 	vehicleData_GET vhlpref = new vehicleData_GET();
+
+	public Geocoder geocoder;
 
 
 	@Override
@@ -158,12 +162,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //			Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
 //		}
 
-		/***********Shared Pref*********/
-		SharedPreferences sharedPref = this.getSharedPreferences("KEYS",MODE_PRIVATE);
-		//Toast.makeText(this, "Key is " + sharedPref.getString("RIDE_KEY", null),  Toast.LENGTH_SHORT).show();
+//		/***********Shared Pref*********/
+//		SharedPreferences sharedPref = this.getSharedPreferences("KEYS",MODE_PRIVATE);
+//		//Toast.makeText(this, "Key is " + sharedPref.getString("RIDE_KEY", null),  Toast.LENGTH_SHORT).show();
+//
+//		// ridekey =  sharedPref.getString("RIDE_KEY", null);
+//		/***********Shared Pref*********/
 
-		// ridekey =  sharedPref.getString("RIDE_KEY", null);
-		/***********Shared Pref*********/
+		geocoder = new Geocoder(this, Locale.getDefault());
 
 		Long tsLong = System.currentTimeMillis()/1000;
 		 time = tsLong.toString() ;
@@ -201,9 +207,12 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			@Override
 			public void onPlaceSelected(Place place) {
 				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
+
+				mDatabaseUID.child("destAddress").setValue(place.getAddress());
+
 				dest_latlng = place.getLatLng();
 
-				mDatabaseUID.child("Dest").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+				mDatabaseUID.child("destCoords").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void Void) {
 						Toast.makeText(CurrentLocation.this, "Dest LOC Saved!", Toast.LENGTH_SHORT).show();
@@ -223,7 +232,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			}
 		});
 
-		/**********************Places Search*********************/
+		/**********************Places Search Ends*********************/
 	}
 
 
@@ -355,12 +364,25 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 			Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
 
-//			mDatabaseUID.child("Last Loc").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+			mDatabaseUID.child("lastlocCoords").setValue(latLng.toString());
+
+			List<Address> currentAddresses;
+			try {
+				currentAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+				String startAddress = currentAddresses.get(0).getAddressLine(0);
+				mDatabaseUID.child("currentAddress").setValue(startAddress);
+
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+
 //				@Override
 //				public void onSuccess(Void Void) {
 //					//Toast.makeText(CurrentLocation.this, "Last Loc Saved!", Toast.LENGTH_SHORT).show();
 //				}
-			Toast.makeText(this, "MaKey: " + mDatabaseUID.getKey(), Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "MaKey: " + mDatabaseUID.getKey(), Toast.LENGTH_SHORT).show();
 //			});
 
 			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
@@ -368,17 +390,30 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 			if (flag) {
 				checkDistance = curr_distance;
-				//Toast.makeText(this, "Check Distance is: " + checkDistance, Toast.LENGTH_SHORT).show();
 
-				//Storing Start Position
-//				if (client != null) {
-//					mDatabaseUID.child("start").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-//						@Override
-//						public void onSuccess(Void Void) {
-//							Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
-//						}
-//					});
-//				}
+				/******************Storing Start Position to Firebase*********************/
+				if (client != null) {
+
+				List<Address> startAddresses;
+				try {
+					startAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+					String startAddress = startAddresses.get(0).getAddressLine(0);
+					mDatabaseUID.child("startAddress").setValue(startAddress);
+
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+
+					mDatabaseUID.child("startCoords").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+						@Override
+						public void onSuccess(Void Void) {
+							Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+				/******************Storing Start Position to Firebase*********************/
+
 
 				flag = false;
 			} else {
@@ -394,10 +429,10 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					checkDistance = curr_distance;
 				}
 			}
-
 		}
 
-	}    private void Notification(){
+	}
+	private void Notification(){
 
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(this, "notify_001");
@@ -454,9 +489,6 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	}
 
 
-
-
-
 	//Routing Listeners
 	@Override
 	public void onRoutingFailure(RouteException e)
@@ -504,11 +536,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			//Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ routes.get(i).getDistanceValue()+": duration - "+ routes.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
 
 		}
-
-		total_distance = routes.get(0).getDistanceValue();
-
+		total_distance = routes.get(0).getDistanceValue()/1000;
 
 		Toast.makeText(this, "Route Distance(in KM) is" + total_distance / 1000, Toast.LENGTH_SHORT).show();
+
+		mDatabaseUID.child("totaldist").setValue(total_distance);
 
 	}
 

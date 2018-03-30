@@ -50,7 +50,6 @@ public class vehicleData_GET extends AppCompatActivity {
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
-    Boolean alpha = true;
 
 
     public final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
@@ -132,7 +131,7 @@ public class vehicleData_GET extends AppCompatActivity {
                                         mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Toast.makeText(vehicleData_GET.this, "Mubarak", Toast.LENGTH_SHORT).show();
+                                                //Toast.makeText(vehicleData_GET.this, "Mubarak", Toast.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -140,15 +139,6 @@ public class vehicleData_GET extends AppCompatActivity {
                                     }
 
                                 });
-
-//                                Toast.makeText(MainActivity.this, vehicleData
-//                                        , Toast.LENGTH_SHORT).show();
-
-//                                Intent myIntent = new Intent(vehicleData_GET.this, vehicleData_POST.class);
-//                                myIntent.putExtra("details", vehicleData ); //Optional parameters
-//                                startActivity(myIntent);
-
-
                             }
                         },
                         new Response.ErrorListener() {
