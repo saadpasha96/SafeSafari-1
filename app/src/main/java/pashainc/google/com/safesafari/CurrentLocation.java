@@ -9,7 +9,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.CursorIndexOutOfBoundsException;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -92,6 +94,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	private Marker dest_marker;
 	private Marker start_marker;
 	private Button ridenow;
+
 	private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 	private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -105,24 +108,62 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
-	public final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
+
+	private String ridekey = "";
+
+	public DatabaseReference mDatabaseUID = null;
 
 	private Toolbar toolbar;
 
 	DrawerUtil drawer = new DrawerUtil();
 
+	vehicleData_GET vhlpref = new vehicleData_GET();
 
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Intent intent = getIntent();
+
+		if(intent.hasExtra("myKey")){
+			ridekey = getIntent().getStringExtra("myKey");
+			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
+			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
 
+		Intent intent = getIntent();
+		if(intent.hasExtra("myKey")){
+			ridekey = getIntent().getStringExtra("myKey");
+			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
+			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
+		}
+
 //		toolbar = (Toolbar) findViewById(R.id.toolbar);
 //		toolbar.setTitle("Home");
 //
 //		drawer.getDrawer(this, toolbar);
 
+//		Intent intent = getIntent();
+//		if(intent != null) {
+//			ridekey = intent.getStringExtra("mykey");
+//			Toast.makeText(this, "koi chakkar hy " + intent.getStringExtra("myKey"), Toast.LENGTH_SHORT).show();
+//		}
+//		else {
+//			Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
+//		}
+
+		/***********Shared Pref*********/
+		SharedPreferences sharedPref = this.getSharedPreferences("KEYS",MODE_PRIVATE);
+		//Toast.makeText(this, "Key is " + sharedPref.getString("RIDE_KEY", null),  Toast.LENGTH_SHORT).show();
+
+		// ridekey =  sharedPref.getString("RIDE_KEY", null);
+		/***********Shared Pref*********/
 
 		Long tsLong = System.currentTimeMillis()/1000;
 		 time = tsLong.toString() ;
@@ -151,7 +192,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		final MarkerOptions markerOptions = new MarkerOptions();
 		markerOptions.draggable(true);
 
-		//**********************Places Search*********************
+		/**********************Places Search*********************/
 
 		PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
 				getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -181,7 +222,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				// TODO: Handle the error.
 			}
 		});
+
+		/**********************Places Search*********************/
 	}
+
+
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -202,7 +247,6 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				}
 		}
 	}
-
 
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
@@ -276,6 +320,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	}
 
+
 	@Override
 	public void onLocationChanged(final Location location) {
 		lastlocation = location;
@@ -315,6 +360,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //				public void onSuccess(Void Void) {
 //					//Toast.makeText(CurrentLocation.this, "Last Loc Saved!", Toast.LENGTH_SHORT).show();
 //				}
+			Toast.makeText(this, "MaKey: " + mDatabaseUID.getKey(), Toast.LENGTH_SHORT).show();
 //			});
 
 			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
@@ -471,4 +517,10 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	}
 
+	public static Intent getIntent(Context context){
+		return new Intent(context, CurrentLocation.class);
+	}
+
 }
+
+

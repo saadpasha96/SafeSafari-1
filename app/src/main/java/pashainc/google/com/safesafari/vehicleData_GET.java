@@ -2,6 +2,8 @@ package pashainc.google.com.safesafari;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.CursorIndexOutOfBoundsException;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,12 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -28,6 +32,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +41,20 @@ public class vehicleData_GET extends AppCompatActivity {
 
     String server_url = "http://www.mtmis.excise-punjab.gov.pk";
 
+
+
+    /****************************Firebase Setting********************************/
+
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    String user = mAuth.getCurrentUser().getUid();
+
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+    Boolean alpha = true;
+
+
+    public final DatabaseReference mDatabaseUID = mDatabase.child("rides").child(user).push();
+    public final String key = mDatabaseUID.getKey();
 
 
     EditText Number;
@@ -46,6 +63,7 @@ public class vehicleData_GET extends AppCompatActivity {
     String number;
     String vehicleData;
     Toolbar toolbar;
+    Button savetofb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +75,19 @@ public class vehicleData_GET extends AppCompatActivity {
 //
 //        DrawerUtil.getDrawer(this, toolbar);
 
+        Toast.makeText(this, "key is "+key, Toast.LENGTH_SHORT).show();
 
+        /***********Shared Pref*********/
+//        if (alpha) {
+//            final SharedPreferences sharedPref = this.getSharedPreferences("KEYS", MODE_PRIVATE);
+//            final SharedPreferences.Editor editor = sharedPref.edit();
+//            editor.putString("RIDE_KEY", key);
+//            editor.apply();
+//            alpha = false;
+//        }
+        /***********Shared Pref*********/
+
+        savetofb = (Button) findViewById(R.id.save);
         vehicleData = "";
 
         Number = (EditText) findViewById(R.id.vhlno);
@@ -68,7 +98,7 @@ public class vehicleData_GET extends AppCompatActivity {
 
         getDetails.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 number = Number.getText().toString();
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(Number.getWindowToken(), 0);
@@ -92,6 +122,24 @@ public class vehicleData_GET extends AppCompatActivity {
 
                                 vhldata.setText(vehicleData);
                                 vhldata.setVisibility(View.VISIBLE);
+
+             /**************************Saving Vehicle Data to Firebase*****************************************/
+
+                                savetofb.setVisibility(View.VISIBLE);
+                                savetofb.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(vehicleData_GET.this, "Mubarak", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key));
+                                    }
+
+                                });
 
 //                                Toast.makeText(MainActivity.this, vehicleData
 //                                        , Toast.LENGTH_SHORT).show();
@@ -132,6 +180,15 @@ public class vehicleData_GET extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(CurrentLocation.getIntent(this).putExtra("myKey", key));
+        finish();
+//        Toast.makeText(this, "Test Backpress", Toast.LENGTH_SHORT).show();
+    }
+
 
     public static String html2text(String html) {
         return Jsoup.parse(html).text();
