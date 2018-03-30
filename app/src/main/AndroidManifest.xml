@@ -39,7 +39,11 @@
 
         </activity>
         <activity android:name=".DrawerActivity" />
-        <activity android:name=".vehicleData_GET" />
+        <activity android:name=".vehicleData_GET"
+            android:theme="@style/DataTheme"
+            android:excludeFromRecents="true"
+            android:label="Enter License Plate No."/>
+
         <activity android:name=".vehicleData_POST" />
         <activity android:name=".HistoryActivity">
 

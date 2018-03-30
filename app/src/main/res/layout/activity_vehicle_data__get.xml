@@ -1,73 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--<LinearLayout android:layout_height="wrap_content"-->
+    <!--android:layout_width="match_parent"-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+    <!--<android.support.design.widget.TextInputLayout-->
+    <!--android:id="@+id/vhlno_layout"-->
+    <!--android:layout_width="362dp"-->
+    <!--android:layout_height="52dp"-->
+    <!--android:layout_marginTop="20dp"    -->
+    <!--android:layout_marginRight="">-->
+
+    <!--<EditText-->
+    <!--android:id="@+id/vhlno"-->
+    <!--android:layout_width="331dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="16dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginTop="32dp"-->
+    <!--android:drawableStart="@drawable/phone_icon"-->
+    <!--android:ems="10"-->
+    <!--android:focusedByDefault="false"-->
+    <!--android:hint="SLM-11-4455"-->
+    <!--android:inputType="textAutoComplete"-->
+    <!--android:singleLine="true" />-->
+    <!--</android.support.design.widget.TextInputLayout>-->
+    <!---->
+<!--</LinearLayout>-->
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pashainc.google.com.safesafari.vehicleData_GET">
+    tools:context="pashainc.google.com.safesafari.vehicleData_GET"
+    tools:layout_editor_absoluteY="25dp">
 
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:titleTextColor="@color/md_white_1000"/>
+    <!--<android.support.v7.widget.Toolbar-->
+    <!--android:id="@+id/toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--app:titleTextColor="@color/md_white_1000"/>-->
 
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/vhlno_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="242dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/vhlno"
-            android:focusedByDefault="false"
-            android:drawableStart="@drawable/phone_icon"
             android:layout_width="331dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:ems="10"
+            android:focusedByDefault="false"
             android:hint="SLM-11-4455"
             android:inputType="textAutoComplete"
-            android:singleLine="true"
-            />
+            android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/send"
-        android:layout_width="218dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginStart="48dp"
+        android:layout_width="48dp"
+        android:layout_height="53dp"
         android:layout_marginTop="28dp"
-        android:background="@drawable/buttonshape"
-        android:text="Send"
-        android:textColor="#FFFF"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vhlno_layout" />
+        android:background="@null"
+        app:layout_constraintStart_toEndOf="@+id/vhlno_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_send_black_24dp" />
 
     <TextView
         android:id="@+id/vhldata"
-        android:layout_width="334dp"
-        android:layout_height="334dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:padding="15dp"
         android:text="TextView"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/send"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@+id/vhlno_layout" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

@@ -1,13 +1,17 @@
 package pashainc.google.com.safesafari;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -15,6 +19,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,13 +31,18 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class vehicleData_GET extends AppCompatActivity {
 
     String server_url = "http://www.mtmis.excise-punjab.gov.pk";
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
     EditText Number;
     TextView vhldata;
-    Button getDetails;
+    ImageButton getDetails;
     String number;
     String vehicleData;
     Toolbar toolbar;
@@ -40,16 +52,17 @@ public class vehicleData_GET extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_data__get);
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        toolbar = (Toolbar)findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//
+//        DrawerUtil.getDrawer(this, toolbar);
 
-        DrawerUtil.getDrawer(this, toolbar);
 
         vehicleData = "";
 
         Number = (EditText) findViewById(R.id.vhlno);
 
-        getDetails = (Button) findViewById(R.id.send);
+        getDetails = (ImageButton) findViewById(R.id.send);
 
         vhldata = (TextView) findViewById(R.id.vhldata);
 
@@ -57,6 +70,8 @@ public class vehicleData_GET extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 number = Number.getText().toString();
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(Number.getWindowToken(), 0);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, server_url,
                         new Response.Listener<String>() {
