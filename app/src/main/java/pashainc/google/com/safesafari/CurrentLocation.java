@@ -436,14 +436,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				if (checkDistance < curr_distance) {
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 3) {
+					if (count >= 5) {
 						Notification();
 						count =0;
 					}
 				}
-				if (checkDistance-curr_distance <= 20){
-					Toast.makeText(this, "Destination Reached", Toast.LENGTH_SHORT).show();
-				}
+//				if (checkDistance-curr_distance <= 20){
+//					Toast.makeText(this, "Destination Reached", Toast.LENGTH_SHORT).show();
+//				}
 				else {
 					count = 0;
 					checkDistance = curr_distance;

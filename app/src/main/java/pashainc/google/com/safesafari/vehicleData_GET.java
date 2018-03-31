@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class vehicleData_GET extends AppCompatActivity {
     String vehicleData;
     Toolbar toolbar;
     Button savetofb;
+    ProgressBar pBar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,7 @@ public class vehicleData_GET extends AppCompatActivity {
 
         savetofb = (Button) findViewById(R.id.save);
         vehicleData = "";
+
 
         Number = (EditText) findViewById(R.id.vhlno);
 

@@ -66,9 +66,9 @@ public class Register extends AppCompatActivity {
                 //check empty edit fields
                 if (!isEmpty(name.getText().toString()) && !isEmpty(guard_name.getText().toString()) && !isEmpty(guard_phone.getText().toString())) {
 
-                    new OnSuccessListener() {
-                        @Override
-                        public void onSuccess(Object o) {
+//                    new OnSuccessListener() {
+//                        @Override
+//                        public void onSuccess(Object o) {
                             String user = mAuth.getCurrentUser().getUid();
                             DatabaseReference mDatabaseUID = mDatabase.child("User").child(user);
                             mDatabaseUID.child("Name").setValue(name.getText().toString());
@@ -80,8 +80,8 @@ public class Register extends AppCompatActivity {
                             Intent Register = new Intent(Register.this, CurrentLocation.class);
                             startActivity(Register);
                             finish();
-                        }
-                    };
+//                        }
+                    //};
 
                 } else {
                     Toast.makeText(Register.this, "You must fill all the fields", Toast.LENGTH_SHORT).show();
