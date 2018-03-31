@@ -33,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -46,6 +47,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -55,6 +57,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -120,6 +123,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	public Geocoder geocoder;
 
 
+	public LinearLayout placelayout;
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -142,8 +147,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 		DrawerUtil.getDrawer(this, toolbar);
 
+		placelayout = (LinearLayout) findViewById(R.id.placelayout);
+
 		Intent intent = getIntent();
-		if(intent.hasExtra("myKey")){
+		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch")){
+			placelayout.setVisibility(View.VISIBLE);
 			ridekey = getIntent().getStringExtra("myKey");
 			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
 			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
@@ -190,17 +198,25 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				.findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
 
-		final MarkerOptions markerOptions = new MarkerOptions();
-		markerOptions.draggable(true);
+//		final MarkerOptions markerOptions = new MarkerOptions();
 
 		/**********************Places Search*********************/
 
-		PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+		final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
 				getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
 		autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 			@Override
 			public void onPlaceSelected(Place place) {
+
+				AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
+						.setTypeFilter(Place.TYPE_COUNTRY)
+						.setCountry("PK")
+						.build();
+				autocompleteFragment.setFilter(autocompleteFilter);
+
+				//autocompleteFragment.setBoundsBias(new LatLngBounds(southwestLatLng, northeastLatLng));
+
 
 				if (dest_marker != null) {
 					dest_marker.remove();
@@ -223,7 +239,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
 						.icon(BitmapDescriptorFactory.defaultMarker(HUE_BLUE)));
 				//Camera Properties
-				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
 			}
 
 			@Override
@@ -347,8 +363,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		markerOptions.position(latLng);
 		markerOptions.title("Current Location");
 		markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-		markerOptions.draggable(false);
-
+		markerOptions.draggable(true);
 
 		//Updating Maker
 		mCurrLocationMarker = mMap.addMarker(markerOptions);

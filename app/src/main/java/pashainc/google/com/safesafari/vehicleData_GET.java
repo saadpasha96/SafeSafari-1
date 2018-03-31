@@ -70,7 +70,7 @@ public class vehicleData_GET extends AppCompatActivity {
         setContentView(R.layout.activity_vehicle_data__get);
 
 
-        Toast.makeText(this, "key is "+key, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "key is "+key, Toast.LENGTH_SHORT).show();
 
         /***********Shared Pref*********/
 //        if (alpha) {
@@ -117,6 +117,7 @@ public class vehicleData_GET extends AppCompatActivity {
 
                                 vhldata.setText(vehicleData);
                                 vhldata.setVisibility(View.VISIBLE);
+                                savetofb.setVisibility(View.VISIBLE);
 
              /**************************Saving Vehicle Data to Firebase*****************************************/
 
@@ -124,14 +125,9 @@ public class vehicleData_GET extends AppCompatActivity {
                                 savetofb.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                //Toast.makeText(vehicleData_GET.this, "Mubarak", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key));
+                                        mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString());
+                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1"));
+                                        finish();
                                     }
 
                                 });
