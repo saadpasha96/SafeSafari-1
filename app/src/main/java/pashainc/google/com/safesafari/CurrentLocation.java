@@ -310,8 +310,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
 		locationRequest = new LocationRequest();
-		locationRequest.setInterval(5000);
-		locationRequest.setFastestInterval(5000);
+		locationRequest.setInterval(10000);
+		locationRequest.setFastestInterval(10000);
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
