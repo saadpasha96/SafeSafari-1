@@ -210,7 +210,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			public void onPlaceSelected(Place place) {
 
 				AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
-						.setTypeFilter(Place.TYPE_COUNTRY)
+						.setTypeFilter(place.TYPE_COUNTRY)
 						.setCountry("PK")
 						.build();
 				autocompleteFragment.setFilter(autocompleteFilter);
@@ -239,7 +239,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
 						.icon(BitmapDescriptorFactory.defaultMarker(HUE_BLUE)));
 				//Camera Properties
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
 			}
 
 			@Override
@@ -370,7 +370,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 
 		//Camera Properties
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 		Log.d("LOC", "Changed");
 
 

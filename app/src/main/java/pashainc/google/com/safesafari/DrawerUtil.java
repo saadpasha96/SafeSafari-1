@@ -68,7 +68,7 @@ public class DrawerUtil {
 				.withCloseOnClick(false)
 				.withActionBarDrawerToggleAnimated(true)
 				.withSelectedItem(-1)
-				.withMultiSelect(false)
+				.withMultiSelect(true)
 				.addDrawerItems(
 						home,
 						rides,
@@ -91,7 +91,8 @@ public class DrawerUtil {
 							case 4:
 								mAuth.signOut();
 								Toast.makeText(activity, "Sign Out Successful", Toast.LENGTH_SHORT).show();
-								activity.finish();
+								Intent intent1 = new Intent(activity, PhoneLogin.class);
+								view.getContext().startActivity(intent1);
 								break;
 						}
 

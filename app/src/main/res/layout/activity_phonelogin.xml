@@ -13,7 +13,8 @@
         android:layout_height="133dp"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/splash_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,40 +25,54 @@
         android:id="@+id/phonetext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="237dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/user_phone"
-            android:focusedByDefault="false"
-            android:drawableStart="@drawable/phone_icon"
             android:layout_width="331dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:drawableStart="@drawable/phone_icon"
             android:ems="10"
+            android:focusedByDefault="false"
             android:hint="923xxxxxxxxx"
             android:inputType="phone"
-            android:singleLine="true"
-            />
+            android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/send_code"
         android:layout_width="218dp"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="48dp"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="28dp"
         android:background="@drawable/buttonshape"
         android:text="Send Code"
         android:textColor="#FFFF"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phonetext" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="144dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/send_code"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

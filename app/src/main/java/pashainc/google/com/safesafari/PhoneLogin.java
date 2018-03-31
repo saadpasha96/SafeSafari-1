@@ -6,10 +6,12 @@ import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,10 +42,11 @@ public class PhoneLogin extends AppCompatActivity {
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
-    private FirebaseAuth.AuthStateListener mAuthstateListener;
     public DatabaseReference mDatabase;
 
+    String phonenumber;
 
+    private ProgressBar pbar;
 
 
     @Override
@@ -55,15 +58,24 @@ public class PhoneLogin extends AppCompatActivity {
 
         userPhone = (EditText) findViewById(R.id.user_phone);
         send_code = (Button) findViewById(R.id.send_code);
+        pbar = (ProgressBar) findViewById(R.id.progressBar3);
+
+
+        int maxLength = 12;
+        int minLength = 11;
+        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(minLength)});
+
 
         send_code.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String phonenumber = userPhone.getText().toString();
+                phonenumber = userPhone.getText().toString();
 
+                pbar.setVisibility(view.VISIBLE);
                 userPhone.setEnabled(false);
-//                loginBtn.setEnabled(false);
+                send_code.setEnabled(false);
 
                 PhoneAuthProvider.getInstance().verifyPhoneNumber(
                         phonenumber,
@@ -87,7 +99,7 @@ public class PhoneLogin extends AppCompatActivity {
             @Override
             public void onVerificationFailed(FirebaseException e) {
 
-                Toast.makeText(PhoneLogin.this, "Verification Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PhoneLogin.this, "Verification Failed, Please Enter Your Number Again!", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -100,10 +112,27 @@ public class PhoneLogin extends AppCompatActivity {
                 mVerificationId = verificationId;
                 mResendToken = token;
 
+
             }
 
+            @Override
+            public void onCodeAutoRetrievalTimeOut(String s) {
+                super.onCodeAutoRetrievalTimeOut(s);
+                resendVerificationCode(phonenumber, mResendToken);
+            }
         };
 
+    }
+
+    private void resendVerificationCode(String phoneNumber,
+                                        PhoneAuthProvider.ForceResendingToken token) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks,         // OnVerificationStateChangedCallbacks
+                token);             // ForceResendingToken from callbacks
     }
 
 

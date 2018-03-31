@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
@@ -28,16 +30,11 @@ public class Register extends AppCompatActivity {
     private static final String TAG = "Register Activity";
     private EditText name, email, password, phone, guard_name, guard_phone;
     private Button register;
-    private ProgressBar pbar;
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
-    @Override
-    public void onStart(){
-        super.onStart();
 
-    }
-
+    private ProgressBar pbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +45,14 @@ public class Register extends AppCompatActivity {
         //phone = (EditText) findViewById(R.id.phone);
         guard_name = (EditText) findViewById(R.id.guard_name);
         guard_phone = (EditText) findViewById(R.id.guard_phone);
+
+        int maxLength = 12;
+        int minLength = 11;
+        guard_phone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+        guard_phone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(minLength)});
         register = (Button) findViewById(R.id.Register);
 
+        pbar = (ProgressBar) findViewById(R.id.progressBar2);
         mAuth = FirebaseAuth.getInstance();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -59,20 +62,26 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "OnClick: attempting to register");
+                pbar.setVisibility(view.VISIBLE);
                 //check empty edit fields
                 if (!isEmpty(name.getText().toString()) && !isEmpty(guard_name.getText().toString()) && !isEmpty(guard_phone.getText().toString())) {
 
-                    String user = mAuth.getCurrentUser().getUid();
-                    DatabaseReference mDatabaseUID = mDatabase.child("User").child(user);
-                    mDatabaseUID.child("Name").setValue(name.getText().toString());
-                    mDatabaseUID.child("Guardian Name").setValue(guard_name.getText().toString());
-                    mDatabaseUID.child("Guardian Phone").setValue(guard_phone.getText().toString());
+                    new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            String user = mAuth.getCurrentUser().getUid();
+                            DatabaseReference mDatabaseUID = mDatabase.child("User").child(user);
+                            mDatabaseUID.child("Name").setValue(name.getText().toString());
+                            mDatabaseUID.child("Guardian Name").setValue(guard_name.getText().toString());
+                            mDatabaseUID.child("Guardian Phone").setValue(guard_phone.getText().toString());
 
-                    Toast.makeText(Register.this, "Success!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Success!", Toast.LENGTH_SHORT).show();
 
-                    Intent Register = new Intent(Register.this, CurrentLocation.class);
-                    startActivity(Register);
-
+                            Intent Register = new Intent(Register.this, CurrentLocation.class);
+                            startActivity(Register);
+                            finish();
+                        }
+                    };
 
                 } else {
                     Toast.makeText(Register.this, "You must fill all the fields", Toast.LENGTH_SHORT).show();
