@@ -117,10 +117,6 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	private Toolbar toolbar;
 
-	DrawerUtil drawer = new DrawerUtil();
-
-	vehicleData_GET vhlpref = new vehicleData_GET();
-
 	public Geocoder geocoder;
 
 
@@ -141,18 +137,17 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_location);
 
+		toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		DrawerUtil.getDrawer(this, toolbar);
+
 		Intent intent = getIntent();
 		if(intent.hasExtra("myKey")){
 			ridekey = getIntent().getStringExtra("myKey");
 			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
 			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
 		}
-
-//		toolbar = (Toolbar) findViewById(R.id.toolbar);
-//		toolbar.setTitle("Home");
-//
-//		drawer.getDrawer(this, toolbar);
-
 //		Intent intent = getIntent();
 //		if(intent != null) {
 //			ridekey = intent.getStringExtra("mykey");
@@ -206,6 +201,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 			@Override
 			public void onPlaceSelected(Place place) {
+
+				if (dest_marker != null) {
+					dest_marker.remove();
+				}
+
 				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
 
 				mDatabaseUID.child("destAddress").setValue(place.getAddress());
@@ -416,7 +416,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 
 				flag = false;
-			} else {
+			}
+			else {
 				if (checkDistance < curr_distance) {
 					count++;
 					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
@@ -424,13 +425,16 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 						Notification();
 						count =0;
 					}
-				} else {
+				}
+				if (checkDistance-curr_distance <= 20){
+					Toast.makeText(this, "Destination Reached", Toast.LENGTH_SHORT).show();
+				}
+				else {
 					count = 0;
 					checkDistance = curr_distance;
 				}
 			}
 		}
-
 	}
 	private void Notification(){
 

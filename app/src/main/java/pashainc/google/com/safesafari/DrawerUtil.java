@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -24,7 +25,11 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+
 public class DrawerUtil {
+
+	 static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 	public static void getDrawer(final Activity activity, Toolbar toolbar) {
 
 		// Create the AccountHeader
@@ -34,12 +39,7 @@ public class DrawerUtil {
 				.addProfiles(
 						new ProfileDrawerItem().withName("Saad")
 				)
-//				.withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-//					@Override
-//					public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-//						return false;
-//					}
-//				})
+				.withAlternativeProfileHeaderSwitching(true)
 				.build();
 
 
@@ -89,7 +89,9 @@ public class DrawerUtil {
 								Toast.makeText(activity, "Profile Settings", Toast.LENGTH_SHORT).show();
 								break;
 							case 4:
-								Toast.makeText(activity, "Sign Out", Toast.LENGTH_SHORT).show();
+								mAuth.signOut();
+								Toast.makeText(activity, "Sign Out Successful", Toast.LENGTH_SHORT).show();
+								activity.finish();
 								break;
 						}
 

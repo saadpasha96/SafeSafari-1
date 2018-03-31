@@ -37,13 +37,6 @@
     tools:layout_editor_absoluteY="25dp">
 
 
-    <!--<android.support.v7.widget.Toolbar-->
-    <!--android:id="@+id/toolbar"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="?attr/actionBarSize"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--app:titleTextColor="@color/md_white_1000"/>-->
-
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/vhlno_layout"
@@ -71,7 +64,7 @@
         android:id="@+id/send"
         android:layout_width="48dp"
         android:layout_height="53dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="30dp"
         android:background="@null"
         app:layout_constraintStart_toEndOf="@+id/vhlno_layout"
         app:layout_constraintTop_toTopOf="parent"
@@ -92,16 +85,16 @@
 
     <Button
         android:id="@+id/save"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="128dp"
+        android:layout_width="82dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="128dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/buttonshape"
         android:text="Save"
         android:textColor="#FFFF"
         android:textSize="18sp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/vhldata" />
 
 

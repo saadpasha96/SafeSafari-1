@@ -34,11 +34,13 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".CurrentLocation" />
+            android:name=".CurrentLocation"
+            android:label="Home"
+            />
         <activity android:name=".PhoneLogin">
-
         </activity>
         <activity android:name=".DrawerActivity" />
+
         <activity android:name=".vehicleData_GET"
             android:theme="@style/DataTheme"
             android:excludeFromRecents="true"

@@ -69,10 +69,6 @@ public class vehicleData_GET extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_data__get);
 
-//        toolbar = (Toolbar)findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        DrawerUtil.getDrawer(this, toolbar);
 
         Toast.makeText(this, "key is "+key, Toast.LENGTH_SHORT).show();
 
@@ -174,7 +170,7 @@ public class vehicleData_GET extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(CurrentLocation.getIntent(this).putExtra("myKey", key));
+//        startActivity(CurrentLocation.getIntent(this).putExtra("myKey", key));
         finish();
 //        Toast.makeText(this, "Test Backpress", Toast.LENGTH_SHORT).show();
     }
