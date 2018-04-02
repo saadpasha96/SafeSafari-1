@@ -23,7 +23,7 @@ public class SmsSend extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage("+923022352114", "+923336118070", "Hii", null, null);
+		smsManager.sendTextMessage("+923336118070", "+923336118070", "Hii", null, null);
 		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
 
 	}

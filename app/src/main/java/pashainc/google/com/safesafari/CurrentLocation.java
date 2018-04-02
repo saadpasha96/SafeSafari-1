@@ -19,6 +19,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -154,7 +156,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			placelayout.setVisibility(View.VISIBLE);
 			ridekey = getIntent().getStringExtra("myKey");
 			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
-			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
 		}
 //		Intent intent = getIntent();
 //		if(intent != null) {
@@ -310,8 +312,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
 		locationRequest = new LocationRequest();
-		locationRequest.setInterval(10000);
-		locationRequest.setFastestInterval(10000);
+		locationRequest.setInterval(5000);
+		locationRequest.setFastestInterval(5000);
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
@@ -460,6 +462,16 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		bigText.setBigContentTitle("ALERT!!");
 		bigText.setSummaryText("Press Snooze Button to ENSURE your Safety");
 
+		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		// Vibrate for 500 milliseconds
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			v.vibrate(VibrationEffect.createOneShot(10000, VibrationEffect.DEFAULT_AMPLITUDE));
+		}else{
+			//deprecated in API 26
+			v.vibrate(500);
+		}
+
+
 		Intent snoozeIntent = new Intent(this, AlertReceiver.class);
 		snoozeIntent.putExtra("Stop", 1);
 
@@ -468,6 +480,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				PendingIntent.getBroadcast(this, 1, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		Intent sendalert = new Intent(this, SmsSend.class);
+		sendalert.putExtra("Send",2);
 		PendingIntent alertPendingIntent =
 				PendingIntent.getBroadcast(this, 1, sendalert, PendingIntent.FLAG_CANCEL_CURRENT);
 

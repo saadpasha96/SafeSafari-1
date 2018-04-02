@@ -96,7 +96,7 @@ public class DrawerUtil {
 								break;
 						}
 
-						return true;
+						return false;
 					}
 
 				})

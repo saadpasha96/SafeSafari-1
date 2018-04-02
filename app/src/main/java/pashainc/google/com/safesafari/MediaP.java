@@ -2,6 +2,9 @@ package pashainc.google.com.safesafari;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 /**
  * Created by black on 3/28/2018.
@@ -25,6 +28,7 @@ public class MediaP {
 		mp = MediaPlayer.create(context, resID);
 		mp.start();
 		mp.setLooping(true);
+		
 
 	}
 

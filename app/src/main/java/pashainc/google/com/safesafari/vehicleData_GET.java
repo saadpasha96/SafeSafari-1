@@ -25,8 +25,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +46,8 @@ public class vehicleData_GET extends AppCompatActivity {
 
     String server_url = "http://www.mtmis.excise-punjab.gov.pk";
 
-
+//     static DatabaseReference mDatabaseUID;
+//    int counter;
 
     /****************************Firebase Setting********************************/
 
@@ -70,6 +75,11 @@ public class vehicleData_GET extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_data__get);
+
+//        mDatabaseUID = mDatabase.child("rides").child(user).child("ride no "+counter);
+//        mDatabase.child("row 1").setValue("1");
+//        mDatabase.child("row 2").setValue("1");
+//        mDatabase.child("row 3").setValue("1");
 
 
 //        Toast.makeText(this, "key is "+key, Toast.LENGTH_SHORT).show();

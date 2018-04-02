@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,20 +17,24 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 public class HistoryActivity extends AppCompatActivity {
 
-
-
-
 	RecyclerView rc;
 	DatabaseReference mDatabase;
 	Button btn;
+
+
+	DatabaseReference nRef;
+	DatabaseReference ridesRef;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,8 +47,26 @@ public class HistoryActivity extends AppCompatActivity {
 		rc.setLayoutManager(new LinearLayoutManager(this));
 
 		mDatabase = FirebaseDatabase.getInstance().getReference().child("dsf");
+/////////////////////////////////////////////////
+			nRef = FirebaseDatabase.getInstance().getReference();
+			ridesRef =nRef.child("rides").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("-L8vJw6oRXsIdS63eccl");
+			Query query = ridesRef;
 
-		Query query = mDatabase.child("rides");
+			query.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					Log.w("",""+dataSnapshot.child("currentAddress").getValue());
+				}
+
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+
+				}
+			});
+
+/////////////////////////////////////////////////////////////////
+
+//		Query query = mDatabase.child("rides");
 
 
 		btn.setOnClickListener(new View.OnClickListener() {
