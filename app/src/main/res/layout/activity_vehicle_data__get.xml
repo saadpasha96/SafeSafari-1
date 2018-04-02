@@ -70,31 +70,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_send_black_24dp" />
 
-    <TextView
-        android:id="@+id/vhldata"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:padding="15dp"
-        android:text="TextView"
-        android:visibility="gone"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vhlno_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/vhlno_layout"
+        android:id="@+id/vhldatalayout">
+
+        <TextView
+            android:id="@+id/vhldata"
+            android:layout_width="278dp"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:text="TextView"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.346"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vhlno_layout" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/save"
         android:layout_width="82dp"
         android:layout_height="31dp"
-        android:layout_marginStart="128dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/buttonshape"
         android:text="Save"
         android:textColor="#FFFF"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/vhldata" />
+        app:layout_constraintTop_toBottomOf="@+id/vhldatalayout" />
 
     <!--<ProgressBar-->
         <!--android:id="@+id/pbar"-->

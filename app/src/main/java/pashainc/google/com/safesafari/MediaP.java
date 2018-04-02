@@ -27,8 +27,7 @@ public class MediaP {
 
 		mp = MediaPlayer.create(context, resID);
 		mp.start();
-		mp.setLooping(true);
-		
+
 
 	}
 

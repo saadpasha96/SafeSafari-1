@@ -127,17 +127,17 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	public LinearLayout placelayout;
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Intent intent = getIntent();
-
-		if(intent.hasExtra("myKey")){
-			ridekey = getIntent().getStringExtra("myKey");
-			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
-			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
-		}
-	}
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		Intent intent = getIntent();
+//
+//		if(intent.hasExtra("myKey")){
+//			ridekey = getIntent().getStringExtra("myKey");
+//			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
+//			Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
+//		}
+//	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -365,14 +365,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		markerOptions.position(latLng);
 		markerOptions.title("Current Location");
 		markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-		markerOptions.draggable(true);
+		markerOptions.draggable(false);
 
 		//Updating Maker
 		mCurrLocationMarker = mMap.addMarker(markerOptions);
 
 
 		//Camera Properties
-		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 		Log.d("LOC", "Changed");
 
 
@@ -437,10 +437,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			else {
 				if (checkDistance < curr_distance) {
 					count++;
-					Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
 					if (count >= 5) {
 						Notification();
-						count =0;
 					}
 				}
 //				if (checkDistance-curr_distance <= 20){
@@ -479,6 +478,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		PendingIntent snoozePendingIntent =
 				PendingIntent.getBroadcast(this, 1, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+
 		Intent sendalert = new Intent(this, SmsSend.class);
 		sendalert.putExtra("Send",2);
 		PendingIntent alertPendingIntent =
@@ -496,9 +496,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		mBuilder.setPriority(android.app.Notification.PRIORITY_MAX);
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
-		mBuilder.setTimeoutAfter(5000);
 		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent);
 		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent);
+
 
 		MediaP m = new MediaP(getApplicationContext());
 		m.mp();

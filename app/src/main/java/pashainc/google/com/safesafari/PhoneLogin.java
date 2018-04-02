@@ -61,32 +61,35 @@ public class PhoneLogin extends AppCompatActivity {
         pbar = (ProgressBar) findViewById(R.id.progressBar3);
 
 
-        int maxLength = 12;
-        int minLength = 11;
-        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
-        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(minLength)});
+//        int maxLength = 12;
+//        int minLength = 11;
+//        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+//        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(minLength)});
+        String pattern = "\\d{12}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
 
 
-        send_code.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                phonenumber = userPhone.getText().toString();
+        if ((!isEmpty(userPhone.getText().toString())&& (userPhone.getText().toString()==pattern))) {
+            send_code.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                pbar.setVisibility(view.VISIBLE);
-                userPhone.setEnabled(false);
-                send_code.setEnabled(false);
+                    phonenumber = userPhone.getText().toString();
 
-                PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                        phonenumber,
-                        60,
-                        TimeUnit.SECONDS,
-                        PhoneLogin.this,
-                        mCallbacks
-                );
-            }
-        });
+                    pbar.setVisibility(view.VISIBLE);
+                    userPhone.setEnabled(false);
+                    send_code.setEnabled(false);
 
+                    PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                            phonenumber,
+                            20,
+                            TimeUnit.SECONDS,
+                            PhoneLogin.this,
+                            mCallbacks
+                    );
+                }
+            });
+        }
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -100,7 +103,8 @@ public class PhoneLogin extends AppCompatActivity {
             public void onVerificationFailed(FirebaseException e) {
 
                 Toast.makeText(PhoneLogin.this, "Verification Failed, Please Enter Your Number Again!", Toast.LENGTH_SHORT).show();
-
+                pbar.setVisibility(View.GONE);
+                send_code.setEnabled(true);
             }
 
             @Override
@@ -124,6 +128,9 @@ public class PhoneLogin extends AppCompatActivity {
 
     }
 
+    private Boolean isEmpty(String string) {
+        return string.equals("");
+    }
     private void resendVerificationCode(String phoneNumber,
                                         PhoneAuthProvider.ForceResendingToken token) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(

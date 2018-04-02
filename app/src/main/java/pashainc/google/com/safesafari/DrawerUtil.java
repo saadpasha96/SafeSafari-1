@@ -65,10 +65,10 @@ public class DrawerUtil {
 				.withActionBarDrawerToggle(true)
 				.withAccountHeader(headerResult)
 				.withTranslucentStatusBar(false)
-				.withCloseOnClick(false)
+				.withCloseOnClick(true)
 				.withActionBarDrawerToggleAnimated(true)
-				.withSelectedItem(-1)
-				.withMultiSelect(true)
+				.withSelectedItem(-2)
+				.withMultiSelect(false)
 				.addDrawerItems(
 						home,
 						rides,
