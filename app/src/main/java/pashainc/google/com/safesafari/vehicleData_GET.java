@@ -69,7 +69,7 @@ public class vehicleData_GET extends AppCompatActivity {
     String vehicleData;
     Toolbar toolbar;
     Button savetofb;
-    ProgressBar pBar2;
+    ProgressBar pBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +97,8 @@ public class vehicleData_GET extends AppCompatActivity {
         savetofb = (Button) findViewById(R.id.save);
         vehicleData = "";
 
+        pBar = (ProgressBar) findViewById(R.id.progressingB);
+
 
         Number = (EditText) findViewById(R.id.vhlno);
 
@@ -110,6 +112,7 @@ public class vehicleData_GET extends AppCompatActivity {
                 number = Number.getText().toString();
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(Number.getWindowToken(), 0);
+                pBar.setVisibility(View.VISIBLE);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, server_url,
                         new Response.Listener<String>() {
@@ -130,7 +133,7 @@ public class vehicleData_GET extends AppCompatActivity {
 
                                 vhldata.setText(vehicleData);
                                 vhldata.setVisibility(View.VISIBLE);
-                                savetofb.setVisibility(View.VISIBLE);
+                                pBar.setVisibility(View.GONE);
 
              /**************************Saving Vehicle Data to Firebase*****************************************/
 
@@ -139,6 +142,7 @@ public class vehicleData_GET extends AppCompatActivity {
                                     @Override
                                     public void onClick(View view) {
                                         mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString());
+                                        Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
                                         startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1"));
                                         finish();
                                     }

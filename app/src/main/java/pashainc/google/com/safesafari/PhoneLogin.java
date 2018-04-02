@@ -153,7 +153,6 @@ public class PhoneLogin extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-//////////////////////////////////////////////////////////////////////////////////
                             mDatabase = FirebaseDatabase.getInstance().getReference();
 
                             final String key = mAuth.getCurrentUser().getUid();
@@ -181,7 +180,6 @@ public class PhoneLogin extends AppCompatActivity {
 
                                 }
                             });
-///////////////////////////////////////////////////////////////////////////////////////
 
                         } else {
                             // Sign in failed, display a message and update the UI

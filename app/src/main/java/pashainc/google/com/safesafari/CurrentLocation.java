@@ -67,9 +67,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mikepenz.materialdrawer.Drawer;
 
 import java.io.IOException;
@@ -139,6 +141,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //		}
 //	}
 
+	String userName;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -173,6 +178,21 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //
 //		// ridekey =  sharedPref.getString("RIDE_KEY", null);
 //		/***********Shared Pref*********/
+//		final DatabaseReference query = mDatabase.child(user);
+//
+//
+//		query.addValueEventListener(new ValueEventListener() {
+//			@Override
+//			public void onDataChange(DataSnapshot dataSnapshot) {
+//				userName = dataSnapshot.getValue().toString();
+//				Toast.makeText(CurrentLocation.this, "query is "+userName, Toast.LENGTH_SHORT).show();
+//			}
+//
+//			@Override
+//			public void onCancelled(DatabaseError databaseError) {
+//
+//			}
+//		});
 
 		geocoder = new Geocoder(this, Locale.getDefault());
 
@@ -474,7 +494,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		Intent snoozeIntent = new Intent(this, AlertReceiver.class);
 		snoozeIntent.putExtra("Stop", 1);
 
-		//snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 1);
+		//snoozeIntent.putExtra(EXTRA_NOTIFICATION_IwD, 1);
 		PendingIntent snoozePendingIntent =
 				PendingIntent.getBroadcast(this, 1, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -483,6 +503,12 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		sendalert.putExtra("Send",2);
 		PendingIntent alertPendingIntent =
 				PendingIntent.getBroadcast(this, 1, sendalert, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		Intent actintent = new Intent(this, CurrentLocation.class);
+		sendalert.putExtra("Send",2);
+		PendingIntent pactintent =
+				PendingIntent.getActivity(this, 1, actintent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
 
 
@@ -496,6 +522,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		mBuilder.setPriority(android.app.Notification.PRIORITY_MAX);
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
+		mBuilder.setTimeoutAfter(45000);
+		mBuilder.setContentIntent(pactintent);
 		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent);
 		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent);
 
@@ -570,7 +598,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		}
 		total_distance = routes.get(0).getDistanceValue()/1000;
 
-		Toast.makeText(this, "Route Distance(in KM) is" + total_distance / 1000, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Route Distance(in KM) is" + total_distance, Toast.LENGTH_SHORT).show();
 
 		mDatabaseUID.child("totaldist").setValue(total_distance);
 

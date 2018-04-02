@@ -23,7 +23,7 @@ public class MediaP {
 	public void mp (){
 		//        Playing Audio
 
-		int resID = R.raw.alert;
+		int resID = R.raw.alertme;
 
 		mp = MediaPlayer.create(context, resID);
 		mp.start();
