@@ -67,7 +67,7 @@ public class DrawerUtil {
 				.withTranslucentStatusBar(false)
 				.withCloseOnClick(true)
 				.withActionBarDrawerToggleAnimated(true)
-				.withSelectedItem(-2)
+				.withSelectedItem(0)
 				.withMultiSelect(false)
 				.addDrawerItems(
 						home,
@@ -83,7 +83,9 @@ public class DrawerUtil {
 								view.getContext().startActivity(intent);
 								break;
 							case 2:
-								Toast.makeText(activity, "Rides", Toast.LENGTH_SHORT).show();
+								Intent intent2 = new Intent(activity, vehicleData_POST.class);
+								//Toast.makeText(activity, "Rides", Toast.LENGTH_SHORT).show();
+								view.getContext().startActivity(intent2);
 								break;
 							case 3:
 								Toast.makeText(activity, "Profile Settings", Toast.LENGTH_SHORT).show();

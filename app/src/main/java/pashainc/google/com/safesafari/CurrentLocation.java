@@ -104,6 +104,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	private Marker start_marker;
 	private Button ridenow;
 
+	vehicleData_POST vhlpost = new vehicleData_POST();
+	SharedprefWrite spfwr = new SharedprefWrite();
 	private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 	private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -129,6 +131,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	public LinearLayout placelayout;
 
+	public Button ridetrackbtn;
+
 //	@Override
 //	protected void onResume() {
 //		super.onResume();
@@ -141,9 +145,6 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //		}
 //	}
 
-	String userName;
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -151,16 +152,31 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 		toolbar = (Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
 		DrawerUtil.getDrawer(this, toolbar);
+
+		spfwr.getfirebasedata();
+		//vhlpost.result();
+
+		ridenow = (Button) findViewById(R.id.ridebtn);
+
+		ridenow.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(CurrentLocation.this, vehicleData_GET.class);
+				startActivity(intent);
+			}
+		});
 
 		placelayout = (LinearLayout) findViewById(R.id.placelayout);
 
+		ridetrackbtn = (Button) findViewById(R.id.startbtn);
+
 		Intent intent = getIntent();
-		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch")){
+		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch") && intent.hasExtra("hideRideNowBtn")){
 			placelayout.setVisibility(View.VISIBLE);
 			ridekey = getIntent().getStringExtra("myKey");
 			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
+			ridenow.setVisibility(View.GONE);
 			//Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
 		}
 //		Intent intent = getIntent();
@@ -178,36 +194,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //
 //		// ridekey =  sharedPref.getString("RIDE_KEY", null);
 //		/***********Shared Pref*********/
-//		final DatabaseReference query = mDatabase.child(user);
-//
-//
-//		query.addValueEventListener(new ValueEventListener() {
-//			@Override
-//			public void onDataChange(DataSnapshot dataSnapshot) {
-//				userName = dataSnapshot.getValue().toString();
-//				Toast.makeText(CurrentLocation.this, "query is "+userName, Toast.LENGTH_SHORT).show();
-//			}
-//
-//			@Override
-//			public void onCancelled(DatabaseError databaseError) {
-//
-//			}
-//		});
+
 
 		geocoder = new Geocoder(this, Locale.getDefault());
 
 		Long tsLong = System.currentTimeMillis()/1000;
 		 time = tsLong.toString() ;
 
-		ridenow = (Button) findViewById(R.id.ridebtn);
 
-		ridenow.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Intent intent = new Intent(CurrentLocation.this, vehicleData_GET.class);
-				startActivity(intent);
-			}
-		});
 
 		polylines = new ArrayList<>();
 
@@ -246,10 +240,21 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
 
-				mDatabaseUID.child("destAddress").setValue(place.getAddress());
-
 				dest_latlng = place.getLatLng();
 
+				List<Address> destAddresses;
+				try {
+					destAddresses = geocoder.getFromLocation(dest_latlng.latitude, dest_latlng.longitude, 1);
+					String destAddress = destAddresses.get(0).getAddressLine(0);
+					mDatabaseUID.child("destAddress").setValue(destAddress);
+
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+
+
+				mDatabaseUID.child("destAddress").setValue(place.getAddress());
 				mDatabaseUID.child("destCoords").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void Void) {
@@ -257,12 +262,16 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					}
 				});
 
+
 				DrawRoute(dest_latlng);
 				dest_marker = mMap.addMarker(new MarkerOptions().position(dest_latlng).title("Your Destination")
 						.icon(BitmapDescriptorFactory.defaultMarker(HUE_BLUE)));
 				//Camera Properties
 				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest_latlng, 15));
+
 			}
+
+
 
 			@Override
 			public void onError(Status status) {
@@ -332,8 +341,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
 		locationRequest = new LocationRequest();
-		locationRequest.setInterval(5000);
-		locationRequest.setFastestInterval(5000);
+		locationRequest.setInterval(1000);
+		locationRequest.setFastestInterval(1000);
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
@@ -377,7 +386,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		}
 
 		//Getting Start Location Coordinates
-		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+		final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
 
 		//Setting Up the the Marker
@@ -396,81 +405,88 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		Log.d("LOC", "Changed");
 
 
-		if (dest_latlng != null) {
-			float[] result = new float[1];
-
-			Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
-
-			mDatabaseUID.child("lastlocCoords").setValue(latLng.toString());
-
-			List<Address> currentAddresses;
-			try {
-				currentAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-				String startAddress = currentAddresses.get(0).getAddressLine(0);
-				mDatabaseUID.child("currentAddress").setValue(startAddress);
-
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
 
 
-//				@Override
-//				public void onSuccess(Void Void) {
-//					//Toast.makeText(CurrentLocation.this, "Last Loc Saved!", Toast.LENGTH_SHORT).show();
-//				}
-			//Toast.makeText(this, "MaKey: " + mDatabaseUID.getKey(), Toast.LENGTH_SHORT).show();
-//			});
+	/******************************Ride Tracking**********************************************************/
 
-			float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
-			//Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
+//	ridetrackbtn.setOnClickListener(new View.OnClickListener() {
+//		@Override
+//		public void onClick(View view) {
 
-			if (flag) {
-				checkDistance = curr_distance;
+			if (dest_latlng != null) {
+				float[] result = new float[1];
 
-				/******************Storing Start Position to Firebase*********************/
-				if (client != null) {
+				Location.distanceBetween(lastlocation.getLatitude(), lastlocation.getLongitude(), dest_latlng.latitude, dest_latlng.longitude, result);
 
-				List<Address> startAddresses;
+				mDatabaseUID.child("lastlocCoords").setValue(latLng.toString());
+
+				List<Address> currentAddresses;
 				try {
-					startAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-					String startAddress = startAddresses.get(0).getAddressLine(0);
-					mDatabaseUID.child("startAddress").setValue(startAddress);
+					currentAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+					String startAddress = currentAddresses.get(0).getAddressLine(0);
+					mDatabaseUID.child("currentAddress").setValue(startAddress);
 
 				}
 				catch (IOException e) {
 					e.printStackTrace();
 				}
 
-					mDatabaseUID.child("startCoords").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-						@Override
-						public void onSuccess(Void Void) {
-							Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
+
+				float curr_distance = Float.parseFloat(String.format("%.1f", result[0]));
+				//Toast.makeText(this, "Current Distance: " + curr_distance, Toast.LENGTH_SHORT).show();
+
+				if (flag) {
+					checkDistance = curr_distance;
+
+					/******************Storing Start Position to Firebase*********************/
+					if (client != null) {
+
+						List<Address> startAddresses;
+						try {
+							startAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+							String startAddress = startAddresses.get(0).getAddressLine(0);
+							mDatabaseUID.child("startAddress").setValue(startAddress);
+
 						}
-					});
-				}
-				/******************Storing Start Position to Firebase*********************/
+						catch (IOException e) {
+							e.printStackTrace();
+						}
 
-
-				flag = false;
-			}
-			else {
-				if (checkDistance < curr_distance) {
-					count++;
-					//Toast.makeText(this, "Count is: " + count, Toast.LENGTH_SHORT).show();
-					if (count >= 5) {
-						Notification();
+						mDatabaseUID.child("startCoords").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+							@Override
+							public void onSuccess(Void Void) {
+								Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
+							}
+						});
 					}
+					/******************Storing Start Position to Firebase*********************/
+
+
+					flag = false;
 				}
+				else {
+					if (checkDistance < curr_distance) {
+						count++;
+						Toast.makeText(CurrentLocation.this, "Count is: " + count, Toast.LENGTH_SHORT).show();
+
+						if (count >= 3) {
+							Notification();
+						}
+					}
 //				if (checkDistance-curr_distance <= 20){
 //					Toast.makeText(this, "Destination Reached", Toast.LENGTH_SHORT).show();
 //				}
-				else {
-					count = 0;
-					checkDistance = curr_distance;
+					else {
+						count = 0;
+						checkDistance = curr_distance;
+					}
 				}
 			}
-		}
+			/******************************Ride Tracking**********************************************************/
+//		}
+//	});
+
+
 	}
 	private void Notification(){
 
@@ -504,10 +520,10 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		PendingIntent alertPendingIntent =
 				PendingIntent.getBroadcast(this, 1, sendalert, PendingIntent.FLAG_CANCEL_CURRENT);
 
-		Intent actintent = new Intent(this, CurrentLocation.class);
-		sendalert.putExtra("Send",2);
-		PendingIntent pactintent =
-				PendingIntent.getActivity(this, 1, actintent, PendingIntent.FLAG_CANCEL_CURRENT);
+//		Intent actintent = new Intent(this, CurrentLocation.class);
+//		sendalert.putExtra("Send",2);
+//		PendingIntent pactintent =
+//				PendingIntent.getActivity(this, 1, actintent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 
 
@@ -523,7 +539,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
 		mBuilder.setTimeoutAfter(45000);
-		mBuilder.setContentIntent(pactintent);
+		//mBuilder.setContentIntent(pactintent);
 		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent);
 		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent);
 
@@ -596,12 +612,12 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			//Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ routes.get(i).getDistanceValue()+": duration - "+ routes.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
 
 		}
-		total_distance = routes.get(0).getDistanceValue()/1000;
+		total_distance = routes.get(0).getDistanceValue();
 
 		Toast.makeText(this, "Route Distance(in KM) is" + total_distance, Toast.LENGTH_SHORT).show();
 
 		mDatabaseUID.child("totaldist").setValue(total_distance);
-
+		ridetrackbtn.setVisibility(View.VISIBLE);
 	}
 
 	@Override

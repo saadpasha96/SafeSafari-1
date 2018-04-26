@@ -16,7 +16,6 @@
             app:titleTextColor="@color/md_black_1000"/>
     </RelativeLayout>
 
-
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
@@ -70,7 +69,20 @@
             android:textColor="#FFFF"
             android:textSize="18sp" />
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/startbtn"
+            android:layout_width="218dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/buttonshape"
+            android:text="Start Ride"
+            android:visibility="gone"
+            android:textColor="#FFFF"
+            android:textSize="18sp" />
 
+
+    </RelativeLayout>
 
 </RelativeLayout>

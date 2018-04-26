@@ -1,12 +1,9 @@
 package pashainc.google.com.safesafari;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +17,6 @@ import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -34,11 +30,12 @@ import java.util.concurrent.TimeUnit;
 public class PhoneLogin extends AppCompatActivity {
 
     String TAG = "PhoneAuth";
+    //public SharedprefWrite sharedprefforPhoneLogin = new SharedprefWrite();
 
     private FirebaseAuth mAuth;
 //    private ProgressDialog  pbar;
     private EditText userPhone, verfCode;
-    private Button loginBtn, send_code;
+    private Button loginBtn, sendCode ;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -57,7 +54,9 @@ public class PhoneLogin extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         userPhone = (EditText) findViewById(R.id.user_phone);
-        send_code = (Button) findViewById(R.id.send_code);
+        sendCode = (Button) findViewById(R.id.send_code);
+
+
         pbar = (ProgressBar) findViewById(R.id.progressBar3);
 
 
@@ -65,31 +64,34 @@ public class PhoneLogin extends AppCompatActivity {
 //        int minLength = 11;
 //        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
 //        userPhone.setFilters(new InputFilter[] {new InputFilter.LengthFilter(minLength)});
-        String pattern = "\\d{12}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
+        final String pattern = "\\d{12}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
 
 
 
-        if ((!isEmpty(userPhone.getText().toString())&& (userPhone.getText().toString()==pattern))) {
-            send_code.setOnClickListener(new View.OnClickListener() {
+            sendCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if ((!isEmpty(userPhone.getText().toString()))) {
+                       // Toast.makeText(PhoneLogin.this, "Send Butoon WOrking", Toast.LENGTH_SHORT).show();
 
-                    phonenumber = userPhone.getText().toString();
+                        //Toast.makeText(PhoneLogin.this, "Checked", Toast.LENGTH_SHORT).show();
+                        phonenumber = userPhone.getText().toString();
+                        Toast.makeText(PhoneLogin.this, "Working Button", Toast.LENGTH_SHORT).show();
 
-                    pbar.setVisibility(view.VISIBLE);
-                    userPhone.setEnabled(false);
-                    send_code.setEnabled(false);
+                        pbar.setVisibility(view.VISIBLE);
+                        userPhone.setEnabled(false);
+                        sendCode.setEnabled(false);
 
-                    PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                            phonenumber,
-                            20,
-                            TimeUnit.SECONDS,
-                            PhoneLogin.this,
-                            mCallbacks
-                    );
+                        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                                phonenumber,
+                                20,
+                                TimeUnit.SECONDS,
+                                PhoneLogin.this,
+                                mCallbacks
+                        );
+                    }
                 }
             });
-        }
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -104,7 +106,7 @@ public class PhoneLogin extends AppCompatActivity {
 
                 Toast.makeText(PhoneLogin.this, "Verification Failed, Please Enter Your Number Again!", Toast.LENGTH_SHORT).show();
                 pbar.setVisibility(View.GONE);
-                send_code.setEnabled(true);
+                //sendCode.setEnabled(true);
             }
 
             @Override
@@ -112,6 +114,7 @@ public class PhoneLogin extends AppCompatActivity {
                                    PhoneAuthProvider.ForceResendingToken token) {
 
                 Log.d(TAG, "onCodeSent:" + verificationId);
+                Toast.makeText(PhoneLogin.this, "Code sent", Toast.LENGTH_SHORT).show();
 
                 mVerificationId = verificationId;
                 mResendToken = token;
@@ -123,6 +126,7 @@ public class PhoneLogin extends AppCompatActivity {
             public void onCodeAutoRetrievalTimeOut(String s) {
                 super.onCodeAutoRetrievalTimeOut(s);
                 resendVerificationCode(phonenumber, mResendToken);
+                Toast.makeText(PhoneLogin.this, "Timeout", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -167,6 +171,7 @@ public class PhoneLogin extends AppCompatActivity {
                                     if (snapshot.hasChild(key)) {
                                         // run some code
                                         Intent currentLocation = new Intent(PhoneLogin.this, CurrentLocation.class);
+//                                        sharedprefforPhoneLogin.getfirebasedata();
                                         startActivity(currentLocation);
                                     }else{
                                         Intent register = new Intent(PhoneLogin.this, Register.class);
@@ -188,8 +193,11 @@ public class PhoneLogin extends AppCompatActivity {
                                 // The verification code entered was invalid
                             }
                         }
+
                     }
                 });
+
+
     }
 
 

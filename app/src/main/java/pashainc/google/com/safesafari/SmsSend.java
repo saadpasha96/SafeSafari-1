@@ -3,6 +3,7 @@ package pashainc.google.com.safesafari;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -19,32 +20,23 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SmsSend extends BroadcastReceiver {
 
-	DatabaseReference mDatabase;
-	private FirebaseAuth mAuth;
 	String userName;
+	Context context;
+	SharedprefWrite spw = new SharedprefWrite();
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-//		mAuth = FirebaseAuth.getInstance();
-//		mDatabase = FirebaseDatabase.getInstance().getReference();
-//		String user = mAuth.getCurrentUser().getUid();
-//
-//		final DatabaseReference query = mDatabase.child(user);
-
+		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+		userName = spfread.getString("UserName", null);
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage("+923336118070", "+923336118070", "User in Danger", null, null);
+		smsManager.sendTextMessage("+923336118070", "+923336118070",userName, null, null);
 		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
 
-//		query.addValueEventListener(new ValueEventListener() {
-//			@Override
-//			public void onDataChange(DataSnapshot dataSnapshot) {
-//				userName = dataSnapshot.getValue().toString();
-//			}
-//
-//			@Override
-//			public void onCancelled(DatabaseError databaseError) {
-//
-//			}
-//		});
 	}
+
+	public void SharedPrefRead(){
+
+	}
+
 }

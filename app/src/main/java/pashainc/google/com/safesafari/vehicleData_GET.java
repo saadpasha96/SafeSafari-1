@@ -143,7 +143,7 @@ public class vehicleData_GET extends AppCompatActivity {
                                     public void onClick(View view) {
                                         mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString());
                                         Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
-                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1"));
+                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1").putExtra("hideRideNowBtn","2"));
                                         finish();
                                     }
 
