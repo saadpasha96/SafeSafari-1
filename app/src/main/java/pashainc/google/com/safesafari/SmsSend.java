@@ -22,7 +22,7 @@ public class SmsSend extends BroadcastReceiver {
 
 	String userName;
 	Context context;
-	SharedprefWrite spw = new SharedprefWrite();
+	//SharedprefWrite spw = new SharedprefWrite(context);
 
 	@Override
 	public void onReceive(Context context, Intent intent) {

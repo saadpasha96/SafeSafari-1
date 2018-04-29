@@ -105,7 +105,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	private Button ridenow;
 
 	vehicleData_POST vhlpost = new vehicleData_POST();
-	SharedprefWrite spfwr = new SharedprefWrite();
+
 	private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 	private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -154,8 +154,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		setSupportActionBar(toolbar);
 		DrawerUtil.getDrawer(this, toolbar);
 
+		SharedprefWrite spfwr = new SharedprefWrite(getApplicationContext());
 		spfwr.getfirebasedata();
-		//vhlpost.result();
 
 		ridenow = (Button) findViewById(R.id.ridebtn);
 

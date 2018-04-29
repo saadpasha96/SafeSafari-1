@@ -23,10 +23,13 @@ public class SharedprefWrite {
 	public String user_name ;
 	public String guard_name ;
 	public String guard_phone ;
-	public SharedPreferences sharedPreferences;
 	public SharedPreferences.Editor editor;
 	public Context context;
 	FirebaseAuth mAuth;
+
+	public SharedprefWrite(Context context) {
+		this.context = context;
+	}
 
 	public void getfirebasedata() {
 		mAuth = FirebaseAuth.getInstance();
@@ -49,7 +52,12 @@ public class SharedprefWrite {
 //				editor.putString("GuardianName", guard_name);
 //				editor.putString("GuardianPhone", guard_phone);
 //				editor.commit();
-				Log.e("nbb", username);
+				Log.e("blah" +10, username);
+				SharedPreferences sharedPreferences = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+				editor = sharedPreferences.edit();
+				editor.putString("UserName", username);
+				editor.commit();
+
 			}
 			public void onCancelled(DatabaseError databaseError) {
 
@@ -59,13 +67,13 @@ public class SharedprefWrite {
 
 	}
 
-	public void storeinsharedpref(){
-		sharedPreferences = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
-		editor = sharedPreferences.edit();
-		editor.putString("UserName", user_name);
-		editor.putString("GuardianName", guard_name);
-		editor.putString("GuardianPhone", guard_phone);
-		editor.commit();
-	}
+//	public void storeinsharedpref(){
+//		sharedPreferences = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+//		editor = sharedPreferences.edit();
+//		editor.putString("UserName", user_name);
+//		editor.putString("GuardianName", guard_name);
+//		editor.putString("GuardianPhone", guard_phone);
+//		editor.commit();
+//	}
 
 }
