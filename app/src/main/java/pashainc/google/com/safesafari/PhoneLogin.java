@@ -119,7 +119,6 @@ public class PhoneLogin extends AppCompatActivity {
                 mVerificationId = verificationId;
                 mResendToken = token;
 
-
             }
 
             @Override

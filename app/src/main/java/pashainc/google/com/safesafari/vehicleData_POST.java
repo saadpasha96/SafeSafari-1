@@ -28,13 +28,15 @@ public class vehicleData_POST extends AppCompatActivity {
     private Toolbar toolbar;
     private SharedPreferences pref;
     private FirebaseAuth mAuth;
-    SharedPrefRead spr = new SharedPrefRead();
+    SharedPrefRead spr;
 
+    String vhdata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_data__post);
+        spr = new SharedPrefRead(getApplicationContext());
 
 //        data = (TextView) findViewById(R.id.detailsEditText);
 
@@ -50,7 +52,7 @@ public class vehicleData_POST extends AppCompatActivity {
         DrawerUtil.getDrawer(this, toolbar);
 //        mAuth = FirebaseAuth.getInstance();
 //        String userid = mAuth.getCurrentUser().getUid();
-//
+
 //
 //        mDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(userid);
 
@@ -59,6 +61,9 @@ public class vehicleData_POST extends AppCompatActivity {
             @Override
             public void onClick(View view) {
             result();
+            SharedPreferences spr = getSharedPreferences("Vehicle Data", MODE_PRIVATE);
+            vhdata = spr.getString("vehicle data", null);
+            Log.e("VHL data", "a" +vhdata);
             }
 
         });
@@ -68,16 +73,19 @@ public class vehicleData_POST extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String userid = mAuth.getCurrentUser().getUid();
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(userid);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(userid).child("Name");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //String uname =  dataSnapshot.child("Name").getValue().toString();
 //                        SharedPrefRead spr = new SharedPrefRead();
-                        spr.setName(dataSnapshot.getValue(SharedPrefRead.class).getName());
-//                        String post = dataSnapshot.getValue().toString();
-                //Toast.makeText(vehicleData_POST.this, "User Name is" + spr.getName(), Toast.LENGTH_SHORT).show();
-                Log.e("User ", spr.getName());
+//                spr.getName();
+
+                //spr.getName();
+                spr.setName(dataSnapshot.getValue().toString());
+
+
+                Log.e("User ", "ds"+spr.getName());
             }
 
             @Override

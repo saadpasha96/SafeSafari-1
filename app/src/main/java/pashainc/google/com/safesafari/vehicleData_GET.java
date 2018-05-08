@@ -70,6 +70,9 @@ public class vehicleData_GET extends AppCompatActivity {
     Toolbar toolbar;
     Button savetofb;
     ProgressBar pBar;
+    SharedPreferences sharedPref_Vehicledata;
+    SharedPreferences.Editor editor_Vehicledata;
+    Context context ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,10 +141,18 @@ public class vehicleData_GET extends AppCompatActivity {
              /**************************Saving Vehicle Data to Firebase*****************************************/
 
                                 savetofb.setVisibility(View.VISIBLE);
+
                                 savetofb.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString());
+
+
+                                        sharedPref_Vehicledata = getSharedPreferences("Vehicle Data", MODE_PRIVATE);
+                                        editor_Vehicledata = sharedPref_Vehicledata.edit();
+                                        editor_Vehicledata.putString("vehicle data", vehicleData);
+                                        editor_Vehicledata.commit();
+
                                         Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
                                         startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1").putExtra("hideRideNowBtn","2"));
                                         finish();

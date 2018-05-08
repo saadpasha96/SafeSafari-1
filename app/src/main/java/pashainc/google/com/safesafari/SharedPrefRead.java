@@ -11,10 +11,12 @@ public class SharedPrefRead {
 	private String Name;
 	private String guard_name;
 	private String guard_phone;
+	private String vhldata;
 	private Context context;
 	private SharedPreferences sharedpref;
 
-	public SharedPrefRead() {
+	public SharedPrefRead(Context context) {
+		this.context = context;
 	}
 
 	public String getName() {
@@ -25,6 +27,14 @@ public class SharedPrefRead {
 
 	public void setName(String name) {
 		this.Name = name;
+	}
+
+	public String getVhldata() {
+		return vhldata;
+	}
+
+	public void setVhldata(String vhldata) {
+		this.vhldata = vhldata;
 	}
 
 	public String getGuard_name() {

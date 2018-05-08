@@ -133,6 +133,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	public Button ridetrackbtn;
 
+	public SharedPreferences.Editor locationEditor;
+	SharedPreferences sharedPreferencesforLocation;
+
 //	@Override
 //	protected void onResume() {
 //		super.onResume();
@@ -156,6 +159,15 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 		SharedprefWrite spfwr = new SharedprefWrite(getApplicationContext());
 		spfwr.getfirebasedata();
+
+		SmsSend sms = new SmsSend();
+		sms.send(getApplicationContext());
+
+		/******Sharedref For User's Location*********/
+		sharedPreferencesforLocation = getSharedPreferences("LocationData", MODE_PRIVATE);
+		locationEditor = sharedPreferencesforLocation.edit();
+
+		/******Sharedref For User's Location*********/
 
 		ridenow = (Button) findViewById(R.id.ridebtn);
 
@@ -199,7 +211,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		geocoder = new Geocoder(this, Locale.getDefault());
 
 		Long tsLong = System.currentTimeMillis()/1000;
-		 time = tsLong.toString() ;
+		time = tsLong.toString() ;
 
 
 
@@ -248,13 +260,18 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					String destAddress = destAddresses.get(0).getAddressLine(0);
 					mDatabaseUID.child("destAddress").setValue(destAddress);
 
+					locationEditor.putString("Destination Address", destAddress);
+					locationEditor.putString("Destination Latlng", dest_latlng.toString());
+					boolean result = locationEditor.commit();
+
+					Toast.makeText(CurrentLocation.this, ""+result, Toast.LENGTH_SHORT).show();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
 				}
 
 
-				mDatabaseUID.child("destAddress").setValue(place.getAddress());
+				//mDatabaseUID.child("destAddress").setValue(place.getAddress());
 				mDatabaseUID.child("destCoords").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void Void) {
@@ -420,11 +437,19 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 				mDatabaseUID.child("lastlocCoords").setValue(latLng.toString());
 
+				/*****Use these Coords for sending SMS both for Alert & Start Ride******/
+				locationEditor.putString("LastLoc latlng", latLng.toString());
+				locationEditor.commit();
+
 				List<Address> currentAddresses;
 				try {
 					currentAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
 					String startAddress = currentAddresses.get(0).getAddressLine(0);
 					mDatabaseUID.child("currentAddress").setValue(startAddress);
+
+					/*****Use this address for sending SMS both for Alert & Start Ride******/
+					locationEditor.putString("LastLoc Address", startAddress);
+					locationEditor.commit();
 
 				}
 				catch (IOException e) {
@@ -617,6 +642,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		Toast.makeText(this, "Route Distance(in KM) is" + total_distance, Toast.LENGTH_SHORT).show();
 
 		mDatabaseUID.child("totaldist").setValue(total_distance);
+
+		String tdistance = String.valueOf(total_distance);
+		locationEditor.putString("totalDistance", tdistance);
+		locationEditor.commit();
+
 		ridetrackbtn.setVisibility(View.VISIBLE);
 	}
 
