@@ -37,10 +37,9 @@
     tools:layout_editor_absoluteY="25dp">
 
 
-
     <android.support.design.widget.TextInputLayout
         android:id="@+id/vhlno_layout"
-        android:layout_width="242dp"
+        android:layout_width="202dp"
         android:layout_height="52dp"
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,6 +116,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvplate"
+        android:visibility="gone"
+        android:layout_width="207dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vhlno_layout" />
+
+    <ImageButton
+        android:id="@+id/ocrlauncherbutton"
+        android:layout_width="49dp"
+        android:layout_height="51dp"
+        android:background="@null"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toEndOf="@+id/send"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
 
 
 </android.support.constraint.ConstraintLayout>

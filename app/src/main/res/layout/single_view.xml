@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/cdAll"
         android:layout_margin="5dp">
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,31 +48,12 @@
                     android:textSize="20dp"
 
                     android:text="Start Location"
-                    android:id="@+id/tv"/>
+                    android:id="@+id/tvStartLocation"/>
             </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="10">
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="70dp"
-                    android:layout_weight="2"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="fitXY"
-                    android:padding="5dp"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textColor="#292828"
-                    android:layout_weight="8"
-                    android:textSize="20dp"
-                    android:id="@+id/tv"/>
-            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -92,11 +77,28 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:text="End Location"
-                    android:id="@+id/tv"/>
+                    android:id="@+id/tvEndLocation"/>
             </LinearLayout>
 
 
+            <android.support.v7.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="15dp"
+                app:cardCornerRadius="10dp"
+                android:id="@+id/cdFlag"
+                app:cardBackgroundColor="#ec1818"
+
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp">
+
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
+
+
+
+
 
 
     </android.support.v7.widget.CardView>

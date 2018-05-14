@@ -83,12 +83,14 @@ public class DrawerUtil {
 								view.getContext().startActivity(intent);
 								break;
 							case 2:
-								Intent intent2 = new Intent(activity, vehicleData_POST.class);
+								Intent intent2 = new Intent(activity, HistoryActivity2.class);
 								//Toast.makeText(activity, "Rides", Toast.LENGTH_SHORT).show();
 								view.getContext().startActivity(intent2);
 								break;
 							case 3:
-								Toast.makeText(activity, "Profile Settings", Toast.LENGTH_SHORT).show();
+								Intent intent3 =new Intent(activity, OCR.class);
+								Toast.makeText(activity, "OCR", Toast.LENGTH_SHORT).show();
+								view.getContext().startActivity(intent3);
 								break;
 							case 4:
 								mAuth.signOut();

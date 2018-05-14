@@ -6,20 +6,29 @@ package pashainc.google.com.safesafari;
 
 public class ReadData {
 
-	public String rideNo;
+	public String startAddress,destAddress;
 
 	public ReadData() {
 	}
 
-	public ReadData(String rideNo) {
-		this.rideNo = rideNo;
+	public ReadData(String startAddress, String destAddress) {
+		this.startAddress = startAddress;
+		this.destAddress = destAddress;
 	}
 
-	public String getRideNo() {
-		return rideNo;
+	public String getStartAddress() {
+		return startAddress;
 	}
 
-	public void setRideNo(String rideNo) {
-		this.rideNo = rideNo;
+	public void setStartAddress(String startAddress) {
+		this.startAddress = startAddress;
+	}
+
+	public String getDestAddress() {
+		return destAddress;
+	}
+
+	public void setDestAddress(String destAddress) {
+		this.destAddress = destAddress;
 	}
 }

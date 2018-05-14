@@ -119,6 +119,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	static float checkDistance = 0;
 	int count = 0;
 	Boolean flag = true;
+	Boolean notificationFlag = true;
+
 
 	private String ridekey = "";
 
@@ -148,6 +150,13 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 //		}
 //	}
 
+	public String dest_coords;
+	public String dest_address;
+	public String current_coords;
+	public String current_address;
+	public String start_coords;
+	public String start_address;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -160,8 +169,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		SharedprefWrite spfwr = new SharedprefWrite(getApplicationContext());
 		spfwr.getfirebasedata();
 
-		SmsSend sms = new SmsSend();
-		sms.send(getApplicationContext());
+
 
 		/******Sharedref For User's Location*********/
 		sharedPreferencesforLocation = getSharedPreferences("LocationData", MODE_PRIVATE);
@@ -182,6 +190,27 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		placelayout = (LinearLayout) findViewById(R.id.placelayout);
 
 		ridetrackbtn = (Button) findViewById(R.id.startbtn);
+		ridetrackbtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				mDatabaseUID.child("destAddress").setValue(dest_address);
+				dest_coords = dest_latlng.toString();
+				mDatabaseUID.child("destCoords").setValue(dest_coords);
+
+				mDatabaseUID.child("startCoords").setValue(start_coords);
+				mDatabaseUID.child("startAddress").setValue(start_address);
+
+				locationEditor.putString("Destination Address", dest_address);
+				locationEditor.putString("Destination Latlng", dest_coords);
+				locationEditor.putString("Start Coords", start_coords);
+				Boolean result = locationEditor.commit();
+				Toast.makeText(CurrentLocation.this, "Done"+result.toString() , Toast.LENGTH_SHORT).show();
+
+				SmsSend sms = new SmsSend();
+				sms.send(getApplicationContext());
+
+			}
+		});
 
 		Intent intent = getIntent();
 		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch") && intent.hasExtra("hideRideNowBtn")){
@@ -257,14 +286,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				List<Address> destAddresses;
 				try {
 					destAddresses = geocoder.getFromLocation(dest_latlng.latitude, dest_latlng.longitude, 1);
-					String destAddress = destAddresses.get(0).getAddressLine(0);
-					mDatabaseUID.child("destAddress").setValue(destAddress);
+					dest_address = destAddresses.get(0).getAddressLine(0);
 
-					locationEditor.putString("Destination Address", destAddress);
-					locationEditor.putString("Destination Latlng", dest_latlng.toString());
-					boolean result = locationEditor.commit();
-
-					Toast.makeText(CurrentLocation.this, ""+result, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(CurrentLocation.this, ""+result, Toast.LENGTH_SHORT).show();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -272,12 +296,12 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 
 				//mDatabaseUID.child("destAddress").setValue(place.getAddress());
-				mDatabaseUID.child("destCoords").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-					@Override
-					public void onSuccess(Void Void) {
-						Toast.makeText(CurrentLocation.this, "Dest LOC Saved!", Toast.LENGTH_SHORT).show();
-					}
-				});
+//				mDatabaseUID.child("destCoords").setValue(dest_latlng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+//					@Override
+//					public void onSuccess(Void Void) {
+//						Toast.makeText(CurrentLocation.this, "Dest LOC Saved!", Toast.LENGTH_SHORT).show();
+//					}
+//				});
 
 
 				DrawRoute(dest_latlng);
@@ -440,6 +464,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				/*****Use these Coords for sending SMS both for Alert & Start Ride******/
 				locationEditor.putString("LastLoc latlng", latLng.toString());
 				locationEditor.commit();
+				//Log.e("LastLoc Coords", latLng.toString() );
+
 
 				List<Address> currentAddresses;
 				try {
@@ -447,7 +473,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					String startAddress = currentAddresses.get(0).getAddressLine(0);
 					mDatabaseUID.child("currentAddress").setValue(startAddress);
 
-					/*****Use this address for sending SMS both for Alert & Start Ride******/
+					/*****Use this Address for sending SMS both for Alert & Start Ride******/
 					locationEditor.putString("LastLoc Address", startAddress);
 					locationEditor.commit();
 
@@ -469,20 +495,16 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 						List<Address> startAddresses;
 						try {
 							startAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-							String startAddress = startAddresses.get(0).getAddressLine(0);
-							mDatabaseUID.child("startAddress").setValue(startAddress);
+							start_address = startAddresses.get(0).getAddressLine(0);
+//							mDatabaseUID.child("startAddress").setValue(start_address);
 
 						}
 						catch (IOException e) {
 							e.printStackTrace();
 						}
-
-						mDatabaseUID.child("startCoords").setValue(latLng.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-							@Override
-							public void onSuccess(Void Void) {
-								Toast.makeText(CurrentLocation.this, "Start LOC Saved!", Toast.LENGTH_SHORT).show();
-							}
-						});
+//
+						start_coords = latLng.toString();
+//						mDatabaseUID.child("startCoords").setValue(start_coords);
 					}
 					/******************Storing Start Position to Firebase*********************/
 
@@ -495,7 +517,13 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 						Toast.makeText(CurrentLocation.this, "Count is: " + count, Toast.LENGTH_SHORT).show();
 
 						if (count >= 3) {
-							Notification();
+							if (notificationFlag) {
+//								SharedPreferences spfread = getSharedPreferences("notificationFlagRead", MODE_PRIVATE);
+//								notificationFlag = spfread.getBoolean("flag",false );
+								Notification();
+								notificationFlag = false;
+
+							}
 						}
 					}
 //				if (checkDistance-curr_distance <= 20){
@@ -564,9 +592,10 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		mBuilder.setStyle(bigText);
 		mBuilder.setVisibility(2);
 		mBuilder.setTimeoutAfter(45000);
+
 		//mBuilder.setContentIntent(pactintent);
-		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent);
-		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent);
+		mBuilder.addAction(R.drawable.ic_warning_black_24dp, "Snooze", snoozePendingIntent).setAutoCancel(true);
+		mBuilder.addAction(R.drawable.ic_send_black_24dp, "Send Alert", alertPendingIntent).setAutoCancel(true);
 
 
 		MediaP m = new MediaP(getApplicationContext());

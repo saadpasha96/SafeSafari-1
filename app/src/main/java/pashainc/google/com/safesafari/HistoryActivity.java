@@ -90,8 +90,7 @@ public class HistoryActivity extends AppCompatActivity {
 		) {
 			@Override
 			protected void onBindViewHolder(@NonNull ReaDataViewHolder holder, int position, @NonNull ReadData model) {
-				holder.tv.setText(model.getRideNo());
-				Toast.makeText(getApplicationContext()," "+model.getRideNo(),Toast.LENGTH_LONG).show();
+
 
 				String push = getRef(position).getKey();
 				DatabaseReference m = FirebaseDatabase.getInstance().getReference().child("rides").child(push);
@@ -123,7 +122,6 @@ public class HistoryActivity extends AppCompatActivity {
 			super(itemView);
 
 			view = itemView;
-			tv  = (TextView) view.findViewById(R.id.tv);
 		}
 	}
 

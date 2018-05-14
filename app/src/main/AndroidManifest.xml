@@ -4,9 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -35,35 +35,37 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="ocr"/>
+
         <activity
             android:name=".CurrentLocation"
-            android:label="Home"
-            />
-        <activity android:name=".PhoneLogin">
-        </activity>
+            android:label="Home" />
+        <activity android:name=".PhoneLogin" />
         <activity android:name=".DrawerActivity" />
-
-        <activity android:name=".vehicleData_GET"
-            android:theme="@style/DataTheme"
+        <activity
+            android:name=".vehicleData_GET"
             android:excludeFromRecents="true"
-            android:label="Enter License Plate No."/>
-
+            android:label="Enter License Plate No."
+            android:theme="@style/DataTheme" />
         <activity android:name=".vehicleData_POST" />
-        <activity android:name=".HistoryActivity">
-
-        </activity>
-
-        <activity android:name=".SplashScreen"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".HistoryActivity" />
+        <activity
+            android:name=".SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlertReceiver"></receiver>
-        <receiver android:name=".SmsSend"></receiver>
+        <receiver android:name=".AlertReceiver" />
+        <receiver android:name=".SmsSend" />
 
+        <activity android:name=".HistoryActivity2" />
+        <activity android:name=".OCR"></activity>
     </application>
 
 </manifest>

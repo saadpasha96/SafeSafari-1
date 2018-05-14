@@ -63,8 +63,8 @@ public class vehicleData_GET extends AppCompatActivity {
 
 
     EditText Number;
-    TextView vhldata;
-    ImageButton getDetails;
+    TextView vhldata,ocrresult;
+    ImageButton getDetails, ocrlaunchbutton;
     String number;
     String vehicleData;
     Toolbar toolbar;
@@ -102,17 +102,35 @@ public class vehicleData_GET extends AppCompatActivity {
 
         pBar = (ProgressBar) findViewById(R.id.progressingB);
 
-
+        ocrresult = (TextView) findViewById(R.id.tvplate);
         Number = (EditText) findViewById(R.id.vhlno);
 
         getDetails = (ImageButton) findViewById(R.id.send);
 
         vhldata = (TextView) findViewById(R.id.vhldata);
 
+        ocrlaunchbutton = (ImageButton) findViewById(R.id.ocrlauncherbutton);
+
+        ocrlaunchbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(vehicleData_GET.this, OCR.class);
+                startActivity(intent);
+            }
+        });
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null) {
+            String message = bundle.getString("numberplateVal");
+            Log.e("msg", message);
+            Number.setText(message);
+        }
+
         getDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                number = Number.getText().toString();
+
+                number = Number.getText().toString().trim();
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(Number.getWindowToken(), 0);
                 pBar.setVisibility(View.VISIBLE);
@@ -191,6 +209,10 @@ public class vehicleData_GET extends AppCompatActivity {
 
     }
 
+    public void vhlSearch(){
+
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -199,6 +221,11 @@ public class vehicleData_GET extends AppCompatActivity {
 //        Toast.makeText(this, "Test Backpress", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+    }
 
     public static String html2text(String html) {
         return Jsoup.parse(html).text();

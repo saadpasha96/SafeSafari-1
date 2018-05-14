@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +27,15 @@ public class SmsSend extends BroadcastReceiver {
 	String userName;
 	String guardPhone;
 	String userPhone;
+
+	String startLocCoords;
+	String destLocCoords;
+	String currLocCoords;
+
+	String startLocAddress;
+	String destLocAddress;
+	String currLocAddress;
+
 	Context context;
 	//SharedprefWrite spw = new SharedprefWrite(context);
 
@@ -37,8 +47,17 @@ public class SmsSend extends BroadcastReceiver {
 		guardPhone = spfread.getString("GuardianPhone", null);
 		userPhone = spfread.getString("UserPhone", null);
 
+		SharedPreferences spfridedata = context.getSharedPreferences("LocationData", Context.MODE_PRIVATE);
+		currLocCoords = spfridedata.getString("LastLoc latlng", null);
+		currLocAddress = spfridedata.getString("LastLoc Address", null);
+		String alertmsg = "ALert! I am in danger. My current coordinates are: \n"+currLocCoords;
+		String alertmsg1 = "and my address is: \n"+currLocAddress;
+
+		Log.e("Alert MSG", alertmsg +"\n"+ alertmsg1);
+
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(userPhone, guardPhone ,"ALERT,\nYour family memeber:"+userName+ "travelling from" , null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg, null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg1, null, null);
 		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
 
 	}
@@ -49,8 +68,23 @@ public class SmsSend extends BroadcastReceiver {
 		guardPhone = spfread.getString("GuardianPhone", null);
 		userPhone = spfread.getString("UserPhone", null);
 
+		SharedPreferences spfridedata = context.getSharedPreferences("LocationData", Context.MODE_PRIVATE);
+		startLocCoords = spfridedata.getString("LastLoc latlng", null);
+		destLocCoords = spfridedata.getString("Destination Latlng", null);
+		startLocAddress = spfridedata.getString("LastLoc Address", null);
+		destLocAddress = spfridedata.getString("Destination Address", null);
+
+		String text = "Hello I am travelling from "+startLocAddress+"with coordinates"+startLocCoords+"and my destination is "+destLocAddress+ "with coordinates"+destLocCoords;
+		String msg = "Hello I am travelling from "+startLocAddress+"with coordinates"+startLocCoords;
+		String msg1 = "and my destination is "+destLocAddress+ "with coordinates"+destLocCoords;
+
+		Log.e("msg ","\n"+text);
 		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(userPhone, guardPhone ,"ALERT" , null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,  msg1 , null, null);
+//		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
+//		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
+
 		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
 
 	}
