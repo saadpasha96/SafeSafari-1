@@ -18,7 +18,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -33,6 +37,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -81,9 +86,13 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
+import cafe.adriel.androidaudiorecorder.model.AudioChannel;
+import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
 
 import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static android.os.Build.VERSION_CODES.O;
+import static cafe.adriel.androidaudiorecorder.model.AudioSource.MIC;
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE;
 
 public class CurrentLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -583,6 +592,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 		Toast.makeText(this, "Build OK", Toast.LENGTH_SHORT).show();
 
+
 		mBuilder.setSmallIcon(R.drawable.ic_warning_black_24dp);
 		mBuilder.setTicker("ALERT ALERT");
 		mBuilder.setContentTitle("Alert Notification");
@@ -601,6 +611,27 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		MediaP m = new MediaP(getApplicationContext());
 		m.mp();
 
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				Recorder rec = new Recorder(getApplicationContext());
+				try {
+					rec.record();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		},45000);
+
+		Handler handler1 = new Handler();
+		handler1.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				SmsSend notifSms = new SmsSend();
+				notifSms.alertSms();
+			}
+		},15000);
 
 		NotificationManager mNotificationManager =
 				(NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -684,10 +715,23 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	}
 
+
+
+
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_POWER) {
+//			// Do something here...
+//			Toast.makeText(this, "hii", Toast.LENGTH_SHORT).show();
+//			return true;
+//		}
+//		return super.onKeyDown(keyCode, event);
+//	}
+
+
 	public static Intent getIntent(Context context){
 		return new Intent(context, CurrentLocation.class);
 	}
 
 }
-
 

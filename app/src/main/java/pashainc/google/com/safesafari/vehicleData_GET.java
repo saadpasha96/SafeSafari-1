@@ -40,6 +40,7 @@ import org.jsoup.select.Elements;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 
 public class vehicleData_GET extends AppCompatActivity {
@@ -78,6 +79,7 @@ public class vehicleData_GET extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_data__get);
+        this.setFinishOnTouchOutside(false);
 
 //        mDatabaseUID = mDatabase.child("rides").child(user).child("ride no "+counter);
 //        mDatabase.child("row 1").setValue("1");
@@ -102,7 +104,7 @@ public class vehicleData_GET extends AppCompatActivity {
 
         pBar = (ProgressBar) findViewById(R.id.progressingB);
 
-        ocrresult = (TextView) findViewById(R.id.tvplate);
+        //ocrresult = (TextView) findViewById(R.id.tvplate);
         Number = (EditText) findViewById(R.id.vhlno);
 
         getDetails = (ImageButton) findViewById(R.id.send);
@@ -110,6 +112,7 @@ public class vehicleData_GET extends AppCompatActivity {
         vhldata = (TextView) findViewById(R.id.vhldata);
 
         ocrlaunchbutton = (ImageButton) findViewById(R.id.ocrlauncherbutton);
+
 
         ocrlaunchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +133,7 @@ public class vehicleData_GET extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
 
-                number = Number.getText().toString().trim();
+                number = Number.getText().toString().trim().toUpperCase();
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(Number.getWindowToken(), 0);
                 pBar.setVisibility(View.VISIBLE);
@@ -165,10 +168,37 @@ public class vehicleData_GET extends AppCompatActivity {
                                     public void onClick(View view) {
                                         mDatabaseUID.child("vhldata").setValue(vhldata.getText().toString());
 
+                                        StringTokenizer tokens = new StringTokenizer(vehicleData,"\n");
+                                        String VhlHeading = tokens.nextToken();
+                                        String regnum = tokens.nextToken();
+                                        String chassis = tokens.nextToken();
+                                        String engine = tokens.nextToken();
+                                        String make = tokens.nextToken();
+                                        String regDate = tokens.nextToken();
+                                        String model = tokens.nextToken();
+                                        String price = tokens.nextToken();
+                                        String color = tokens.nextToken();
+                                        String taxDate = tokens.nextToken();
+                                        String OwnerHeading = tokens.nextToken();
+                                        String Oname = tokens.nextToken();
+                                        String Fname = tokens.nextToken();
+                                        String city = tokens.nextToken();
 
-                                        sharedPref_Vehicledata = getSharedPreferences("Vehicle Data", MODE_PRIVATE);
+
+                                        sharedPref_Vehicledata = getSharedPreferences("VehicleData", MODE_PRIVATE);
                                         editor_Vehicledata = sharedPref_Vehicledata.edit();
-                                        editor_Vehicledata.putString("vehicle data", vehicleData);
+                                        editor_Vehicledata.putString("VhlHeading", VhlHeading);
+                                        editor_Vehicledata.putString("regnum", regnum);
+                                        editor_Vehicledata.putString("chassis", chassis);
+                                        editor_Vehicledata.putString("engine", engine);
+                                        editor_Vehicledata.putString("make", make);
+                                        editor_Vehicledata.putString("model", model);
+                                        editor_Vehicledata.putString("color", color);
+                                        editor_Vehicledata.putString("OwnerHeading", OwnerHeading);
+                                        editor_Vehicledata.putString("Oname", Oname);
+                                        editor_Vehicledata.putString("Fname", Fname);
+                                        editor_Vehicledata.putString("city", city);
+
                                         editor_Vehicledata.commit();
 
                                         Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
@@ -209,9 +239,6 @@ public class vehicleData_GET extends AppCompatActivity {
 
     }
 
-    public void vhlSearch(){
-
-    }
 
     @Override
     public void onBackPressed() {

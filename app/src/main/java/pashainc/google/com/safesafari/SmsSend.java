@@ -35,6 +35,7 @@ public class SmsSend extends BroadcastReceiver {
 	String startLocAddress;
 	String destLocAddress;
 	String currLocAddress;
+	String VhlHeading , regnum , chassis, engine , make , model , color , OwnerHeading, Oname , Fname ,city ;
 
 	Context context;
 	//SharedprefWrite spw = new SharedprefWrite(context);
@@ -42,6 +43,10 @@ public class SmsSend extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
+		alertSms();
+	}
+
+	public void alertSms(){
 		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
 		userName = spfread.getString("UserName", null);
 		guardPhone = spfread.getString("GuardianPhone", null);
@@ -58,8 +63,6 @@ public class SmsSend extends BroadcastReceiver {
 		SmsManager smsManager = SmsManager.getDefault();
 		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg, null, null);
 		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg1, null, null);
-		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
-
 	}
 
 	public void send(Context context){
@@ -74,14 +77,35 @@ public class SmsSend extends BroadcastReceiver {
 		startLocAddress = spfridedata.getString("LastLoc Address", null);
 		destLocAddress = spfridedata.getString("Destination Address", null);
 
+		SharedPreferences spfVhlData = context.getSharedPreferences("VehicleData", Context.MODE_PRIVATE);
+		VhlHeading = spfVhlData.getString("VhlHeading", null);
+		regnum = spfVhlData.getString("regnum", null);
+		chassis = spfVhlData.getString("chassis", null);
+		engine = spfVhlData.getString("engine", null);
+		make = spfVhlData.getString("make", null);
+		model = spfVhlData.getString("model", null);
+		color = spfVhlData.getString("color", null);
+		OwnerHeading = spfVhlData.getString("OwnerHeading", null);
+		Oname = spfVhlData.getString("Oname", null);
+		Fname = spfVhlData.getString("Fname", null);
+		city = spfVhlData.getString("city", null);
+
 		String text = "Hello I am travelling from "+startLocAddress+"with coordinates"+startLocCoords+"and my destination is "+destLocAddress+ "with coordinates"+destLocCoords;
 		String msg = "Hello I am travelling from "+startLocAddress+"with coordinates"+startLocCoords;
 		String msg1 = "and my destination is "+destLocAddress+ "with coordinates"+destLocCoords;
+		String msg2 = "and Vehicle Details: "+"\n"+regnum + "\n"+make + "\n"+model + "\n"+color;
+		String msg3 = "Owner Details: "+OwnerHeading + "\n"+Oname + "\n"+Fname + "\n"+city;
 
 		Log.e("msg ","\n"+text);
 		SmsManager smsManager = SmsManager.getDefault();
 		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
 		smsManager.sendTextMessage(userPhone, guardPhone ,  msg1 , null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,  msg2 , null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,  msg3 , null, null);
+		//smsManager.sendTextMessage(userPhone, guardPhone ,  "" , null, null);
+
+
+
 //		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
 //		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
 
