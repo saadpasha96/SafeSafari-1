@@ -43,10 +43,6 @@ public class SmsSend extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		alertSms();
-	}
-
-	public void alertSms(){
 		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
 		userName = spfread.getString("UserName", null);
 		guardPhone = spfread.getString("GuardianPhone", null);
@@ -64,6 +60,25 @@ public class SmsSend extends BroadcastReceiver {
 		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg, null, null);
 		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg1, null, null);
 	}
+//
+//	public void alertSms(){
+//		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+//		userName = spfread.getString("UserName", null);
+//		guardPhone = spfread.getString("GuardianPhone", null);
+//		userPhone = spfread.getString("UserPhone", null);
+//
+//		SharedPreferences spfridedata = context.getSharedPreferences("LocationData", Context.MODE_PRIVATE);
+//		currLocCoords = spfridedata.getString("LastLoc latlng", null);
+//		currLocAddress = spfridedata.getString("LastLoc Address", null);
+//		String alertmsg = "ALert! I am in danger. My current coordinates are: \n"+currLocCoords;
+//		String alertmsg1 = "and my address is: \n"+currLocAddress;
+//
+//		Log.e("Alert MSG", alertmsg +"\n"+ alertmsg1);
+//
+//		SmsManager smsManager = SmsManager.getDefault();
+//		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg, null, null);
+//		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg1, null, null);
+//	}
 
 	public void send(Context context){
 		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
@@ -109,7 +124,7 @@ public class SmsSend extends BroadcastReceiver {
 //		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
 //		smsManager.sendTextMessage(userPhone, guardPhone ,  msg , null, null);
 
-		Toast.makeText(context, "Sms Sent", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Sms Sent to Guardian", Toast.LENGTH_SHORT).show();
 
 	}
 

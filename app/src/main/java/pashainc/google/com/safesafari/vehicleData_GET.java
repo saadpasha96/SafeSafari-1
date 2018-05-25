@@ -201,8 +201,8 @@ public class vehicleData_GET extends AppCompatActivity {
 
                                         editor_Vehicledata.commit();
 
-                                        Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
-                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1").putExtra("hideRideNowBtn","2"));
+//                                        Toast.makeText(vehicleData_GET.this, "Successfully saved!", Toast.LENGTH_SHORT).show();
+                                        startActivity(CurrentLocation.getIntent(view.getContext()).putExtra("myKey", key).putExtra("showPlaceSearch", "1").putExtra("hideRideNowBtn","2").putExtra("showAlertBox",3));
                                         finish();
                                     }
 

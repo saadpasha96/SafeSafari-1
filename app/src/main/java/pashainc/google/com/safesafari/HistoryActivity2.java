@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,15 @@ import com.google.firebase.database.Query;
 public class HistoryActivity2 extends AppCompatActivity {
 
 	RecyclerView rc;
+	Toolbar toolbar;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_history2);
+
+		toolbar = (Toolbar)findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		DrawerUtil.getDrawer(this, toolbar);
 
 
 
@@ -88,8 +94,8 @@ public class HistoryActivity2 extends AppCompatActivity {
 			view = itemView;
 			tvEndLocation  = (TextView) view.findViewById(R.id.tvEndLocation);
 			tvStartLocation  = (TextView) view.findViewById(R.id.tvStartLocation);
-			tvFlag  = (CardView) view.findViewById(R.id.cdFlag);
-			cdALL  = (CardView) view.findViewById(R.id.cdAll);
+//			tvFlag  = (CardView) view.findViewById(R.id.cdFlag);
+//			cdALL  = (CardView) view.findViewById(R.id.cdAll);
 
 		}
 	}

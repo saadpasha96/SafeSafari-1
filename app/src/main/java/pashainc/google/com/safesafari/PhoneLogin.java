@@ -75,8 +75,8 @@ public class PhoneLogin extends AppCompatActivity {
                        // Toast.makeText(PhoneLogin.this, "Send Butoon WOrking", Toast.LENGTH_SHORT).show();
 
                         //Toast.makeText(PhoneLogin.this, "Checked", Toast.LENGTH_SHORT).show();
-                        phonenumber = userPhone.getText().toString();
-                        Toast.makeText(PhoneLogin.this, "Working Button", Toast.LENGTH_SHORT).show();
+                        phonenumber = userPhone.getText().toString().trim();
+                        //Toast.makeText(PhoneLogin.this, "Working Button", Toast.LENGTH_SHORT).show();
 
                         pbar.setVisibility(view.VISIBLE);
                         userPhone.setEnabled(false);

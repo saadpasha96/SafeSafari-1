@@ -2,12 +2,14 @@ package pashainc.google.com.safesafari;
 
 import android.*;
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -213,21 +215,39 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				locationEditor.putString("Destination Latlng", dest_coords);
 				locationEditor.putString("Start Coords", start_coords);
 				Boolean result = locationEditor.commit();
-				Toast.makeText(CurrentLocation.this, "Done"+result.toString() , Toast.LENGTH_SHORT).show();
+				//Toast.makeText(CurrentLocation.this, "Done"+result.toString() , Toast.LENGTH_SHORT).show();
 
 				SmsSend sms = new SmsSend();
 				sms.send(getApplicationContext());
+
+				Toast.makeText(CurrentLocation.this, "Ride is now Started", Toast.LENGTH_SHORT).show();
+				ridetrackbtn.setVisibility(View.GONE);
 
 			}
 		});
 
 		Intent intent = getIntent();
-		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch") && intent.hasExtra("hideRideNowBtn")){
+		if(intent.hasExtra("myKey") && intent.hasExtra("showPlaceSearch") && intent.hasExtra("hideRideNowBtn") && intent.hasExtra("showAlertBox")){
 			placelayout.setVisibility(View.VISIBLE);
 			ridekey = getIntent().getStringExtra("myKey");
 			mDatabaseUID = mDatabase.child("rides").child(user).child(ridekey);
 			ridenow.setVisibility(View.GONE);
 			//Toast.makeText(this, "Key in Current Loc is" + ridekey, Toast.LENGTH_SHORT).show();
+
+			final AlertDialog.Builder builder;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				builder = new AlertDialog.Builder(CurrentLocation.this, android.R.style.Theme_Material_Dialog_Alert);
+			} else {
+				builder = new AlertDialog.Builder(CurrentLocation.this);
+			}
+			builder.setTitle("Please Enter Destination in Search Bar TOP")
+					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					})
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.show();
 		}
 //		Intent intent = getIntent();
 //		if(intent != null) {
@@ -288,7 +308,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					dest_marker.remove();
 				}
 
-				Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(CurrentLocation.this, "Your Address is" + place.getAddress(), Toast.LENGTH_SHORT).show();
 
 				dest_latlng = place.getLatLng();
 
@@ -348,7 +368,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 					}
 					//permission not granted
 					else {
-						Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
 					}
 				}
 		}
@@ -391,8 +411,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
 		locationRequest = new LocationRequest();
-		locationRequest.setInterval(1000);
-		locationRequest.setFastestInterval(1000);
+		locationRequest.setInterval(5000);
+		locationRequest.setFastestInterval(5000);
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
@@ -444,7 +464,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		markerOptions.position(latLng);
 		markerOptions.title("Current Location");
 		markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-		markerOptions.draggable(false);
+		markerOptions.draggable(true);
 
 		//Updating Maker
 		mCurrLocationMarker = mMap.addMarker(markerOptions);
@@ -453,8 +473,6 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		//Camera Properties
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 		Log.d("LOC", "Changed");
-
-
 
 
 	/******************************Ride Tracking**********************************************************/
@@ -523,9 +541,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 				else {
 					if (checkDistance < curr_distance) {
 						count++;
-						Toast.makeText(CurrentLocation.this, "Count is: " + count, Toast.LENGTH_SHORT).show();
+						//Toast.makeText(CurrentLocation.this, "Count is: " + count, Toast.LENGTH_SHORT).show();
 
-						if (count >= 3) {
+						if (count >= 5) {
 							if (notificationFlag) {
 //								SharedPreferences spfread = getSharedPreferences("notificationFlagRead", MODE_PRIVATE);
 //								notificationFlag = spfread.getBoolean("flag",false );
@@ -590,7 +608,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 
 
-		Toast.makeText(this, "Build OK", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Build OK", Toast.LENGTH_SHORT).show();
 
 
 		mBuilder.setSmallIcon(R.drawable.ic_warning_black_24dp);
@@ -629,7 +647,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 			@Override
 			public void run() {
 				SmsSend notifSms = new SmsSend();
-				notifSms.alertSms();
+				notifSms.send(getApplicationContext());
 			}
 		},15000);
 
@@ -656,11 +674,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	{
 		if (e != null)
 		{
-			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		else
 		{
-			Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -699,7 +717,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		}
 		total_distance = routes.get(0).getDistanceValue();
 
-		Toast.makeText(this, "Route Distance(in KM) is" + total_distance, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Route Distance is" + total_distance+"m", Toast.LENGTH_SHORT).show();
 
 		mDatabaseUID.child("totaldist").setValue(total_distance);
 

@@ -76,7 +76,7 @@ public class HistoryActivity extends AppCompatActivity {
 				db.child("rideNo").setValue("asdmkasjdl").addOnSuccessListener(new OnSuccessListener<Void>() {
 					@Override
 					public void onSuccess(Void aVoid) {
-						Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_LONG).show();
+						//Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_LONG).show();
 					}
 				});
 

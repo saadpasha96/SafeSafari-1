@@ -50,10 +50,10 @@ public class DrawerUtil {
 
 		PrimaryDrawerItem home = new PrimaryDrawerItem().withIdentifier(1)
 				.withName("Home");
-		PrimaryDrawerItem rides = new PrimaryDrawerItem()
+		PrimaryDrawerItem rides = new PrimaryDrawerItem().withIdentifier(2)
 				.withIdentifier(2).withName("History");
-		PrimaryDrawerItem profile = new PrimaryDrawerItem()
-				.withIdentifier(2).withName("Profile Settings");
+//		PrimaryDrawerItem profile = new PrimaryDrawerItem()
+//				.withIdentifier(2).withName("Send Alert");
 		PrimaryDrawerItem signout = new PrimaryDrawerItem()
 				.withIdentifier(2).withName("Sign Out");
 
@@ -72,7 +72,7 @@ public class DrawerUtil {
 				.addDrawerItems(
 						home,
 						rides,
-						profile,
+//						profile,
 						signout)
 				.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
 					@Override
@@ -88,13 +88,13 @@ public class DrawerUtil {
 								view.getContext().startActivity(intent2);
 								break;
 							case 3:
-								Intent intent3 =new Intent(activity, OCR.class);
-								Toast.makeText(activity, "OCR", Toast.LENGTH_SHORT).show();
-								view.getContext().startActivity(intent3);
+//								SmsSend alert = new SmsSend();
+//								alert.alertSms();
+//								//Toast.makeText(activity, "OCR", Toast.LENGTH_SHORT).show();
 								break;
 							case 4:
 								mAuth.signOut();
-								Toast.makeText(activity, "Sign Out Successful", Toast.LENGTH_SHORT).show();
+								//Toast.makeText(activity, "Sign Out Successful", Toast.LENGTH_SHORT).show();
 								Intent intent1 = new Intent(activity, PhoneLogin.class);
 								view.getContext().startActivity(intent1);
 								break;
@@ -105,6 +105,8 @@ public class DrawerUtil {
 
 				})
 				.build();
+
+
 
 
 	}

@@ -56,7 +56,7 @@ public class SharedprefWrite {
 				editor.putString("UserPhone", user_phone);
 				boolean result = editor.commit();
 				String r = String.valueOf(result);
-				Toast.makeText(context, "User Data done"+result, Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "User Data done"+result, Toast.LENGTH_SHORT).show();
 				Log.e("SPF", r);
 
 			}
