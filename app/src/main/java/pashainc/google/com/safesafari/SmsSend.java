@@ -128,5 +128,23 @@ public class SmsSend extends BroadcastReceiver {
 
 	}
 
+	public void alert(Context context){
+		SharedPreferences spfread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+		userName = spfread.getString("UserName", null);
+		guardPhone = spfread.getString("GuardianPhone", null);
+		userPhone = spfread.getString("UserPhone", null);
+
+		SharedPreferences spfridedata = context.getSharedPreferences("LocationData", Context.MODE_PRIVATE);
+		currLocCoords = spfridedata.getString("LastLoc latlng", null);
+		currLocAddress = spfridedata.getString("LastLoc Address", null);
+		String alertmsg = "ALert! I am in danger. My current coordinates are: \n"+currLocCoords;
+		String alertmsg1 = "and my address is: \n"+currLocAddress;
+
+		Log.e("Alert MSG", alertmsg +"\n"+ alertmsg1);
+
+		SmsManager smsManager = SmsManager.getDefault();
+		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg, null, null);
+		smsManager.sendTextMessage(userPhone, guardPhone ,alertmsg1, null, null);
+	}
 
 }

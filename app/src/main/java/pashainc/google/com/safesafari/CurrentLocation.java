@@ -145,6 +145,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	public LinearLayout placelayout;
 
 	public Button ridetrackbtn;
+	public Button cancelbutton;
+	public Button alertbutton;
 
 	public SharedPreferences.Editor locationEditor;
 	SharedPreferences sharedPreferencesforLocation;
@@ -177,6 +179,9 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		setSupportActionBar(toolbar);
 		DrawerUtil.getDrawer(this, toolbar);
 
+		alertbutton = (Button) findViewById(R.id.alertbtn);
+
+		/******Sharedref For User's Data*********/
 		SharedprefWrite spfwr = new SharedprefWrite(getApplicationContext());
 		spfwr.getfirebasedata();
 
@@ -185,10 +190,11 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		/******Sharedref For User's Location*********/
 		sharedPreferencesforLocation = getSharedPreferences("LocationData", MODE_PRIVATE);
 		locationEditor = sharedPreferencesforLocation.edit();
-
 		/******Sharedref For User's Location*********/
 
 		ridenow = (Button) findViewById(R.id.ridebtn);
+
+		cancelbutton = (Button) findViewById(R.id.cancelbtn);
 
 		ridenow.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -222,7 +228,18 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 				Toast.makeText(CurrentLocation.this, "Ride is now Started", Toast.LENGTH_SHORT).show();
 				ridetrackbtn.setVisibility(View.GONE);
+				cancelbutton.setVisibility(View.VISIBLE);
+				alertbutton.setVisibility(View.VISIBLE);
+			}
+		});
 
+		cancelbutton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Toast.makeText(CurrentLocation.this, "Ride Cancelled!", Toast.LENGTH_SHORT).show();
+				finish();
+				Intent restart = new Intent(CurrentLocation.this, CurrentLocation.class);
+				startActivity(restart);
 			}
 		});
 
@@ -272,6 +289,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 		time = tsLong.toString() ;
 
 
+		/*******Alert Button******/
+		alertbutton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				SmsSend alertsms = new SmsSend();
+				alertsms.alert(getApplicationContext());
+			}
+		});
 
 		polylines = new ArrayList<>();
 
@@ -411,8 +436,8 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	@Override
 	public void onConnected(@Nullable Bundle bundle) {
 		locationRequest = new LocationRequest();
-		locationRequest.setInterval(5000);
-		locationRequest.setFastestInterval(5000);
+		locationRequest.setInterval(15000);
+		locationRequest.setFastestInterval(15000);
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == (PackageManager.PERMISSION_GRANTED)) {
@@ -674,7 +699,7 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 	{
 		if (e != null)
 		{
-			//Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 		else
 		{
@@ -733,7 +758,14 @@ public class CurrentLocation extends AppCompatActivity implements OnMapReadyCall
 
 	}
 
+	public void Restart()
+	{
+		this.recreate();
+	}
 
+	public void Finish(){
+		this.finish();
+	}
 
 
 //	@Override

@@ -5,7 +5,9 @@ package pashainc.google.com.safesafari;
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -28,9 +30,16 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 public class DrawerUtil {
 
-	 static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+	static Context context;
+
+	public DrawerUtil(Context context){this.context = context;}
+
+	static FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 	public static void getDrawer(final Activity activity, Toolbar toolbar) {
+
+//		SharedPreferences spread = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+//		String userName = spread.getString("UserName", null);
 
 		// Create the AccountHeader
 		AccountHeader headerResult = new AccountHeaderBuilder()
@@ -52,8 +61,10 @@ public class DrawerUtil {
 				.withName("Home");
 		PrimaryDrawerItem rides = new PrimaryDrawerItem().withIdentifier(2)
 				.withIdentifier(2).withName("History");
-//		PrimaryDrawerItem profile = new PrimaryDrawerItem()
-//				.withIdentifier(2).withName("Send Alert");
+		PrimaryDrawerItem profile = new PrimaryDrawerItem()
+				.withIdentifier(2).withName("Edit Profile");
+		PrimaryDrawerItem faq = new PrimaryDrawerItem()
+				.withIdentifier(2).withName("FAQ's");
 		PrimaryDrawerItem signout = new PrimaryDrawerItem()
 				.withIdentifier(2).withName("Sign Out");
 
@@ -67,12 +78,12 @@ public class DrawerUtil {
 				.withTranslucentStatusBar(false)
 				.withCloseOnClick(true)
 				.withActionBarDrawerToggleAnimated(true)
-				.withSelectedItem(0)
-				.withMultiSelect(false)
+
 				.addDrawerItems(
 						home,
 						rides,
-//						profile,
+						profile,
+						faq,
 						signout)
 				.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
 					@Override
@@ -88,15 +99,19 @@ public class DrawerUtil {
 								view.getContext().startActivity(intent2);
 								break;
 							case 3:
-//								SmsSend alert = new SmsSend();
-//								alert.alertSms();
-//								//Toast.makeText(activity, "OCR", Toast.LENGTH_SHORT).show();
+								Intent intent3 = new Intent(activity, ProfileUpdate.class);
+								view.getContext().startActivity(intent3);
 								break;
 							case 4:
+								Intent intent4 = new Intent(activity, FAQ.class);
+								view.getContext().startActivity(intent4);
+								break;
+							case 5:
 								mAuth.signOut();
 								//Toast.makeText(activity, "Sign Out Successful", Toast.LENGTH_SHORT).show();
 								Intent intent1 = new Intent(activity, PhoneLogin.class);
 								view.getContext().startActivity(intent1);
+								activity.finish();
 								break;
 						}
 
@@ -110,6 +125,5 @@ public class DrawerUtil {
 
 
 	}
-
 
 }

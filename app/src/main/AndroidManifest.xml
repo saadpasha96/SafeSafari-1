@@ -6,10 +6,10 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--
@@ -21,13 +21,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Register"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Register"
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -39,31 +40,36 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="ocr"/>
+            android:value="ocr" />
 
         <activity
             android:name=".CurrentLocation"
             android:label="Home"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PhoneLogin"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".DrawerActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PhoneLogin"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DrawerActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".vehicleData_GET"
             android:excludeFromRecents="true"
             android:label="Enter License Plate No."
-            android:theme="@style/DataTheme"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".vehicleData_POST" android:screenOrientation="portrait"/>
-        <activity android:name=".HistoryActivity" android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/DataTheme" />
+        <activity
+            android:name=".vehicleData_POST"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HistoryActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashScreen"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -74,9 +80,19 @@
         <receiver android:name=".AlertReceiver" />
         <receiver android:name=".SmsSend" />
 
-        <activity android:name=".HistoryActivity2"
+        <activity
+            android:name=".HistoryActivity2"
+            android:label="History"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OCR"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProfileUpdate"
+            android:label="EditProfile"
             android:screenOrientation="portrait"/>
-        <activity android:name=".OCR"
+        <activity android:name=".FAQ"
+            android:label="FAQ's"
             android:screenOrientation="portrait"></activity>
     </application>
 

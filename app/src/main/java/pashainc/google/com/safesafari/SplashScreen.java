@@ -31,11 +31,13 @@ public class SplashScreen extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 
 
+
 		mAuth = FirebaseAuth.getInstance();
 
 
 		if(mAuth.getCurrentUser()!=null){
 			Toast.makeText(getApplicationContext(),"Exist",Toast.LENGTH_LONG).show();
+
 			Intent intent = new Intent(SplashScreen.this,CurrentLocation.class);
 			startActivity(intent);
 			finish();
